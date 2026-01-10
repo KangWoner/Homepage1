@@ -53,10 +53,6 @@ window.handleAnswerUpload = function (input) {
 };
 
 window.openGradingModal = async function () {
-    // DEBUG: REMOVE AFTER VERIFICATION
-    alert("DEBUG: Button Clicked! Opening logic starting...");
-    console.log("Opening Grading Modal...");
-
     const modal = document.getElementById('gradingModal');
     if (!modal) {
         alert("CRITICAL ERROR: Modal element 'gradingModal' not found in DOM!");
@@ -70,9 +66,7 @@ window.openGradingModal = async function () {
     }
 
     // Load Data immediately
-    console.log("Fetching problems...");
     await window.fetchProblems();
-    console.log("Problems fetched.");
 };
 
 window.closeGradingModal = function () {
