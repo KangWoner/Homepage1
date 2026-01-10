@@ -13,6 +13,7 @@
   },
   "main": "index.js",
   "dependencies": {
+    "@google-cloud/tasks": "^6.2.1",
     "@google-cloud/vertexai": "^1.0.0",
     "cors": "^2.8.5",
     "firebase-admin": "^11.8.0",

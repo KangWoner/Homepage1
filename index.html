@@ -9,6 +9,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@700&family=Noto+Sans+KR:wght@400;700&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @keyframes gradient-bg {
             0% {
@@ -47,6 +48,19 @@
             text-shadow: 0 0 10px rgba(139, 92, 246, 0.8);
         }
     </style>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+        </script>
 </head>
 
 <body class="bg-[#0a0a0c] text-gray-200 font-['Noto_Sans_KR'] overflow-x-hidden">
@@ -66,708 +80,745 @@
                 1:1 상담
             </a>
         </div>
-    </nav>
 
-    <section class="relative min-h-screen flex items-center justify-center hero-gradient px-6 pt-20">
-        <div class="container mx-auto text-center">
-            <div
-                class="inline-block px-4 py-1.5 mb-6 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-sm font-bold tracking-wide animate-pulse">
-                3-6등급 중위권 학생을 위한 역전 시나리오
-            </div>
-            <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                20년 논술 권위자와<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 neon-text">AI
-                    한박사가 만났습니다</span>
-            </h1>
-            <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-                단순한 코딩이 아닙니다. 20년간 수리논술 현장에서 수만 명을 합격시킨 Woner쌤의 데이터가 고스란히 담긴 AI 첨삭, 오직 Questio에서만 가능합니다.
-            </p>
-            <div class="flex flex-col md:flex-row justify-center gap-4">
-                <button onclick="openGradingModal()"
-                    class="bg-white text-black px-10 py-4 rounded-xl font-bold text-lg hover:bg-purple-500 hover:text-white transition-all">
-                    지금 무료 체험 시작하기
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <section id="expert" class="py-24 bg-[#0d0d11]">
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-2 gap-16 items-center">
-                <div class="relative">
-                    <div class="absolute -inset-4 bg-purple-500/20 blur-3xl rounded-full"></div>
-                    <img src="https://images.unsplash.com/photo-1524178232363-1fb28f74b0cd?auto=format&fit=crop&w=800&q=80"
-                        alt="Education Expert" class="relative rounded-2xl shadow-2xl border border-white/10">
-                    <div class="absolute -bottom-6 -right-6 glass-card p-6 rounded-xl">
-                        <p class="text-purple-400 font-bold text-4xl mb-1">20Y+</p>
-                        <p class="text-sm text-gray-400">University Essay Coaching</p>
-                    </div>
-                </div>
-                <div>
-                    <h2 class="text-4xl font-bold text-white mb-8">기술은 흉내 낼 수 있어도,<br><span class="text-purple-500">20년의
-                            직관</span>은 따라올 수 없습니다.</h2>
-                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
-                        저는 지난 20년간 대학별 수리논술 고사를 지도하며, 3-6등급 학생들이 어디서 막히고 어떻게 서술해야 합격하는지 현장에서 직접 확인했습니다.
-                    </p>
-                    <p class="text-gray-400 text-lg leading-relaxed mb-8">
-                        <strong>Questio</strong>는 그 방대한 '합격 답안의 법칙'을 AI에 이식한 결과물입니다. 가천대부터 고려대(세종)까지, 15개 대학 약술형 논술의 출제
-                        경향을 데이터로 정교하게 분석합니다.
-                    </p>
-                    <ul class="space-y-4">
-                        <li class="flex items-center gap-3 text-white font-medium">
-                            <span class="text-purple-500">✔</span> 대학별 배점 기준 완벽 반영
-                        </li>
-                        <li class="flex items-center gap-3 text-white font-medium">
-                            <span class="text-purple-500">✔</span> 개인별 취약 단원 '성장 지표' 제공
-                        </li>
-                        <li class="flex items-center gap-3 text-white font-medium">
-                            <span class="text-purple-500">✔</span> 국어·수학 통합 약술형 전략 수립
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="ai" class="py-24 relative overflow-hidden">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl font-bold text-white mb-16">AI 한박사가 제공하는<br>초정밀 피드백</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="glass-card p-10 rounded-3xl">
-                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <span class="text-3xl">🎯</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">1초 자동 첨삭</h3>
-                    <p class="text-gray-400">제출 즉시 AI가 서술의 명료성과 정확성을 진단하여 보완점을 제시합니다.</p>
-                </div>
-                <div class="glass-card p-10 rounded-3xl">
-                    <div class="w-16 h-16 bg-pink-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <span class="text-3xl">📊</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">성장 리포트</h3>
-                    <p class="text-gray-400">학생의 문제 해결 능력을 데이터화하여 취약 유형을 집중 관리합니다.</p>
-                </div>
-                <div class="glass-card p-10 rounded-3xl">
-                    <div class="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <span class="text-3xl">📱</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">24/7 학습 파트너</h3>
-                    <p class="text-gray-400">시간과 장소의 제약 없이 언제 어디서든 양질의 논술 지도를 받습니다.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="process" class="py-24 relative">
-        <div class="absolute inset-0 bg-purple-900/10 blur-3xl -z-10"></div>
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <span class="text-purple-500 font-bold tracking-wider text-sm uppercase">Process</span>
-                <h2 class="text-4xl font-bold text-white mt-4">합격으로 가는 <br class="md:hidden">3단계 로드맵</h2>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8 relative">
-                <!-- Line connector for desktop -->
+        <section class="relative min-h-screen flex items-center justify-center hero-gradient px-6 pt-20">
+            <div class="container mx-auto text-center">
                 <div
-                    class="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500/0 via-purple-500/50 to-purple-500/0">
+                    class="inline-block px-4 py-1.5 mb-6 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-sm font-bold tracking-wide animate-pulse">
+                    3-6등급 중위권 학생을 위한 역전 시나리오
                 </div>
-
-                <!-- Step 1 -->
-                <div class="relative z-10 text-center group">
-                    <div
-                        class="w-24 h-24 mx-auto bg-[#0d0d11] border border-purple-500/30 rounded-full flex items-center justify-center mb-6 group-hover:border-purple-500/80 group-hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300">
-                        <span class="text-xl md:text-4xl">📸</span>
-                    </div>
-                    <div
-                        class="inline-block bg-purple-500/10 text-purple-400 px-3 py-1 rounded-full text-xs font-bold mb-4">
-                        STEP 01</div>
-                    <h3 class="text-xl font-bold text-white mb-2">답안 제출</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        작성한 답안을 사진으로 찍어 업로드하세요.<br>
-                        AI가 이미지를 텍스트로 자동 변환합니다.
-                    </p>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="relative z-10 text-center group">
-                    <div
-                        class="w-24 h-24 mx-auto bg-[#0d0d11] border border-purple-500/30 rounded-full flex items-center justify-center mb-6 group-hover:border-purple-500/80 group-hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300">
-                        <span class="text-xl md:text-4xl">⚡</span>
-                    </div>
-                    <div
-                        class="inline-block bg-purple-500/10 text-purple-400 px-3 py-1 rounded-full text-xs font-bold mb-4">
-                        STEP 02</div>
-                    <h3 class="text-xl font-bold text-white mb-2">AI 정밀 진단</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        제출 즉시 1초 만에 채점과 첨삭이 완료됩니다.<br>
-                        대학별 평가 기준에 맞춰 점수를 예측합니다.
-                    </p>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="relative z-10 text-center group">
-                    <div
-                        class="w-24 h-24 mx-auto bg-[#0d0d11] border border-purple-500/30 rounded-full flex items-center justify-center mb-6 group-hover:border-purple-500/80 group-hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300">
-                        <span class="text-xl md:text-4xl">🚀</span>
-                    </div>
-                    <div
-                        class="inline-block bg-purple-500/10 text-purple-400 px-3 py-1 rounded-full text-xs font-bold mb-4">
-                        STEP 03</div>
-                    <h3 class="text-xl font-bold text-white mb-2">맞춤 전략 제시</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        취약 유형을 분석하여 개인별 합격 전략과<br>
-                        맞춤형 추가 문항을 제공합니다.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="pricing" class="py-24 bg-[#0d0d11]">
-        <div class="container mx-auto px-6">
-            <h2 class="text-4xl font-bold text-white text-center mb-16"><span class="text-purple-500">1월 한정 무료
-                    체험</span><br>지금 바로 시작하세요</h2>
-            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div class="glass-card p-8 rounded-3xl border border-white/5">
-                    <h3 class="text-xl font-bold mb-2">스탠다드</h3>
-                    <p class="text-gray-500 text-sm mb-6">국어 또는 수학 선택형</p>
-                    <p class="text-3xl font-bold text-white mb-8">0<span class="text-lg text-gray-500 font-normal"> / 1월
-                            한정 무료</span></p>
-                    <ul class="text-sm text-gray-400 space-y-4 mb-10">
-                        <li>• AI 첨삭 시스템 이용</li>
-                        <li>• 기본 학습 분석 리포트</li>
-                        <li>• 대학별 기출 데이터 제공</li>
-                    </ul>
+                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+                    20년 논술 권위자와<br>
+                    <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 neon-text">AI
+                        한박사가 만났습니다</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+                    단순한 코딩이 아닙니다. 20년간 수리논술 현장에서 수만 명을 합격시킨 Woner쌤의 데이터가 고스란히 담긴 AI 첨삭, 오직 Questio에서만 가능합니다.
+                </p>
+                <div class="flex flex-col md:flex-row justify-center gap-4">
                     <button onclick="openGradingModal()"
-                        class="w-full py-3 rounded-xl border border-white/10 hover:bg-white/5 transition font-bold text-purple-400">무료
-                        체험 시작하기</button>
-                </div>
-                <div class="glass-card p-8 rounded-3xl border-2 border-purple-500 relative">
-                    <div
-                        class="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
-                        Most Popular</div>
-                    <h3 class="text-xl font-bold mb-2">프리미엄</h3>
-                    <p class="text-gray-500 text-sm mb-6">국어 + 수학 올인원</p>
-                    <p class="text-3xl font-bold text-white mb-8">0<span class="text-lg text-gray-500 font-normal"> / 1월
-                            한정 무료</span></p>
-                    <ul class="text-sm text-gray-300 space-y-4 mb-10">
-                        <li>• 국어/수학 전 과목 AI 첨삭</li>
-                        <li>• 고난도 문항 무제한 제출</li>
-                        <li>• 취약점 정밀 진단 시스템</li>
-                    </ul>
-                    <button onclick="openGradingModal()"
-                        class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white transition font-bold">무료
-                        체험 시작하기</button>
-                </div>
-                <div class="glass-card p-8 rounded-3xl border border-white/5">
-                    <h3 class="text-xl font-bold mb-2">연간 풀패키지</h3>
-                    <p class="text-gray-500 text-sm mb-6">수능까지 완벽 집중</p>
-                    <p class="text-3xl font-bold text-white mb-8">149만<span class="text-lg text-gray-500 font-normal"> /
-                            연</span></p>
-                    <ul class="text-sm text-gray-400 space-y-4 mb-10">
-                        <li>• 전 과목 프리미엄 모든 기능</li>
-                        <li>• 월 1회 대입 전략 상담</li>
-                        <li>• **20% 할인 혜택 포함**</li>
-                    </ul>
-                    <button
-                        class="w-full py-3 rounded-xl border border-white/10 hover:bg-white/5 transition font-bold">상담 후
-                        결제</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="py-12 border-t border-white/5 px-6">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="text-gray-500 text-sm">
-                © 2026 QUESTIO. All rights reserved. <br>
-                사업자등록번호: [원장님 번호 입력] | 대표: [원장님 성함]
-            </div>
-            <div class="flex gap-6">
-                <a href="#" class="text-gray-400 hover:text-white transition">이용약관</a>
-                <a href="#" class="text-gray-400 hover:text-white transition">개인정보처리방침</a>
-            </div>
-        </div>
-    </footer>
-
-    <div class="fixed bottom-8 right-8 z-50">
-        <a href="https://pf.kakao.com/_hanbaksa-TEST_/chat" target="_blank"
-            class="flex items-center gap-3 bg-[#FEE500] text-black px-6 py-4 rounded-full font-bold shadow-2xl hover:scale-110 transition-transform">
-            <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
-                class="w-6 h-6">
-            원장님 직접 상담
-        </a>
-    </div>
-
-    <!-- Admin Node Modal (Replaces Grading Modal) -->
-    <div id="gradingModal" class="fixed inset-0 z-[100] hidden">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeGradingModal()"></div>
-
-        <!-- Dashboard Content -->
-        <div
-            class="absolute inset-4 md:inset-10 bg-[#0a0a0c] border border-white/10 rounded-3xl overflow-hidden flex flex-col shadow-2xl">
-
-            <!-- Header -->
-            <div class="flex items-center justify-between px-8 py-6 border-b border-white/5 bg-[#13111c]">
-                <div>
-                    <h1 class="text-3xl font-['Outfit'] font-bold text-white tracking-widest">ADMIN <span
-                            class="text-blue-500">NODE</span></h1>
-                    <div class="flex items-center gap-2 text-xs text-gray-500 mt-1">
-                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        TIME-SERIES GROWTH MONITOR
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button class="bg-[#1c1a26] border border-white/10 px-4 py-2 rounded-lg text-sm text-gray-300">
-                        STANDARD AI (v3.5)
-                    </button>
-                    <button onclick="closeGradingModal()"
-                        class="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition">
-                        ✕
+                        class="bg-white text-black px-10 py-4 rounded-xl font-bold text-lg hover:bg-purple-500 hover:text-white transition-all">
+                        지금 무료 체험 시작하기
                     </button>
                 </div>
             </div>
+        </section>
 
-            <!-- Main Body -->
-            <div class="flex-1 overflow-y-auto p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 custom-scrollbar">
-
-                <!-- Left Column: Database & Context (7 cols) -->
-                <div class="lg:col-span-7 flex flex-col gap-6">
-
-                    <!-- 1. Master Database Sync -->
-                    <div class="bg-[#13111c] border border-blue-500/20 rounded-2xl p-6 relative overflow-hidden">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-blue-400 font-bold text-sm tracking-wider">MASTER DATABASE SYNC</h3>
-                            <span id="recordCount" class="text-xs text-blue-500 font-mono">0 RECORDS</span>
-                        </div>
-                        <div class="flex items-center gap-4 bg-[#0a0a0c] border border-white/10 rounded-xl p-2 px-4">
-                            <div class="flex-1 truncate text-gray-500 text-sm font-mono" id="syncFileName">No CSV Loaded
-                            </div>
-                            <input type="file" id="csvInput" accept=".csv" class="hidden"
-                                onchange="handleCSVUpload(this)">
-                            <button onclick="document.getElementById('csvInput').click()"
-                                class="text-xs text-gray-400 hover:text-white uppercase font-bold">File</button>
-                            <button onclick="document.getElementById('csvInput').click()"
-                                class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow-[0_0_15px_rgba(59,130,246,0.5)]">SYNC</button>
+        <section id="expert" class="py-24 bg-[#0d0d11]">
+            <div class="container mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-16 items-center">
+                    <div class="relative">
+                        <div class="absolute -inset-4 bg-purple-500/20 blur-3xl rounded-full"></div>
+                        <img src="https://images.unsplash.com/photo-1524178232363-1fb28f74b0cd?auto=format&fit=crop&w=800&q=80"
+                            alt="Education Expert" class="relative rounded-2xl shadow-2xl border border-white/10">
+                        <div class="absolute -bottom-6 -right-6 glass-card p-6 rounded-xl">
+                            <p class="text-purple-400 font-bold text-4xl mb-1">20Y+</p>
+                            <p class="text-sm text-gray-400">University Essay Coaching</p>
                         </div>
                     </div>
-
-                    <!-- 2. Filters -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">University</label>
-                            <input type="text" id="filterUniversity" placeholder="아주대학교"
-                                class="w-full bg-[#13111c] border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:outline-none font-bold text-lg placeholder-gray-700 transition">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Year</label>
-                            <input type="text" id="filterYear" placeholder="2025"
-                                class="w-full bg-[#13111c] border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:outline-none font-bold text-lg placeholder-gray-700 transition">
-                        </div>
-                    </div>
-
-                    <!-- 3. Matched Styles (Problem List) -->
                     <div>
-                        <!-- Search Action -->
-                        <button onclick="filterProblems()"
-                            class="w-full py-4 bg-[#1c1a26] border border-white/10 rounded-xl text-gray-400 font-bold hover:text-white hover:border-blue-500 hover:bg-blue-500/10 transition flex items-center justify-center gap-2 group mb-4">
-                            <svg class="h-5 w-5 text-blue-500 group-hover:scale-110 transition" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                            문제유형 선택 (조건 검색)
+                        <h2 class="text-4xl font-bold text-white mb-8">기술은 흉내 낼 수 있어도,<br><span
+                                class="text-purple-500">20년의
+                                직관</span>은 따라올 수 없습니다.</h2>
+                        <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                            저는 지난 20년간 대학별 수리논술 고사를 지도하며, 3-6등급 학생들이 어디서 막히고 어떻게 서술해야 합격하는지 현장에서 직접 확인했습니다.
+                        </p>
+                        <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                            <strong>Questio</strong>는 그 방대한 '합격 답안의 법칙'을 AI에 이식한 결과물입니다. 가천대부터 고려대(세종)까지, 15개 대학
+                            약술형 논술의 출제
+                            경향을 데이터로 정교하게 분석합니다.
+                        </p>
+                        <ul class="space-y-4">
+                            <li class="flex items-center gap-3 text-white font-medium">
+                                <span class="text-purple-500">✔</span> 대학별 배점 기준 완벽 반영
+                            </li>
+                            <li class="flex items-center gap-3 text-white font-medium">
+                                <span class="text-purple-500">✔</span> 개인별 취약 단원 '성장 지표' 제공
+                            </li>
+                            <li class="flex items-center gap-3 text-white font-medium">
+                                <span class="text-purple-500">✔</span> 국어·수학 통합 약술형 전략 수립
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ai" class="py-24 relative overflow-hidden">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl font-bold text-white mb-16">AI 한박사가 제공하는<br>초정밀 피드백</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="glass-card p-10 rounded-3xl">
+                        <div
+                            class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <span class="text-3xl">🎯</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">1초 자동 첨삭</h3>
+                        <p class="text-gray-400">제출 즉시 AI가 서술의 명료성과 정확성을 진단하여 보완점을 제시합니다.</p>
+                    </div>
+                    <div class="glass-card p-10 rounded-3xl">
+                        <div class="w-16 h-16 bg-pink-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <span class="text-3xl">📊</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">성장 리포트</h3>
+                        <p class="text-gray-400">학생의 문제 해결 능력을 데이터화하여 취약 유형을 집중 관리합니다.</p>
+                    </div>
+                    <div class="glass-card p-10 rounded-3xl">
+                        <div class="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <span class="text-3xl">📱</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">24/7 학습 파트너</h3>
+                        <p class="text-gray-400">시간과 장소의 제약 없이 언제 어디서든 양질의 논술 지도를 받습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="process" class="py-24 relative">
+            <div class="absolute inset-0 bg-purple-900/10 blur-3xl -z-10"></div>
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <span class="text-purple-500 font-bold tracking-wider text-sm uppercase">Process</span>
+                    <h2 class="text-4xl font-bold text-white mt-4">합격으로 가는 <br class="md:hidden">3단계 로드맵</h2>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 relative">
+                    <!-- Line connector for desktop -->
+                    <div
+                        class="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500/0 via-purple-500/50 to-purple-500/0">
+                    </div>
+
+                    <!-- Step 1 -->
+                    <div class="relative z-10 text-center group">
+                        <div
+                            class="w-24 h-24 mx-auto bg-[#0d0d11] border border-purple-500/30 rounded-full flex items-center justify-center mb-6 group-hover:border-purple-500/80 group-hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300">
+                            <span class="text-xl md:text-4xl">📸</span>
+                        </div>
+                        <div
+                            class="inline-block bg-purple-500/10 text-purple-400 px-3 py-1 rounded-full text-xs font-bold mb-4">
+                            STEP 01</div>
+                        <h3 class="text-xl font-bold text-white mb-2">답안 제출</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            작성한 답안을 사진으로 찍어 업로드하세요.<br>
+                            AI가 이미지를 텍스트로 자동 변환합니다.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="relative z-10 text-center group">
+                        <div
+                            class="w-24 h-24 mx-auto bg-[#0d0d11] border border-purple-500/30 rounded-full flex items-center justify-center mb-6 group-hover:border-purple-500/80 group-hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300">
+                            <span class="text-xl md:text-4xl">⚡</span>
+                        </div>
+                        <div
+                            class="inline-block bg-purple-500/10 text-purple-400 px-3 py-1 rounded-full text-xs font-bold mb-4">
+                            STEP 02</div>
+                        <h3 class="text-xl font-bold text-white mb-2">AI 정밀 진단</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            제출 즉시 1초 만에 채점과 첨삭이 완료됩니다.<br>
+                            대학별 평가 기준에 맞춰 점수를 예측합니다.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="relative z-10 text-center group">
+                        <div
+                            class="w-24 h-24 mx-auto bg-[#0d0d11] border border-purple-500/30 rounded-full flex items-center justify-center mb-6 group-hover:border-purple-500/80 group-hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300">
+                            <span class="text-xl md:text-4xl">🚀</span>
+                        </div>
+                        <div
+                            class="inline-block bg-purple-500/10 text-purple-400 px-3 py-1 rounded-full text-xs font-bold mb-4">
+                            STEP 03</div>
+                        <h3 class="text-xl font-bold text-white mb-2">맞춤 전략 제시</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            취약 유형을 분석하여 개인별 합격 전략과<br>
+                            맞춤형 추가 문항을 제공합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="py-24 bg-[#0d0d11]">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-white text-center mb-16"><span class="text-purple-500">1월 한정
+                        무료
+                        체험</span><br>지금 바로 시작하세요</h2>
+                <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                    <div class="glass-card p-8 rounded-3xl border border-white/5">
+                        <h3 class="text-xl font-bold mb-2">스탠다드</h3>
+                        <p class="text-gray-500 text-sm mb-6">국어 또는 수학 선택형</p>
+                        <p class="text-3xl font-bold text-white mb-8">0<span class="text-lg text-gray-500 font-normal">
+                                / 1월
+                                한정 무료</span></p>
+                        <ul class="text-sm text-gray-400 space-y-4 mb-10">
+                            <li>• AI 첨삭 시스템 이용</li>
+                            <li>• 기본 학습 분석 리포트</li>
+                            <li>• 대학별 기출 데이터 제공</li>
+                        </ul>
+                        <button onclick="openGradingModal()"
+                            class="w-full py-3 rounded-xl border border-white/10 hover:bg-white/5 transition font-bold text-purple-400">무료
+                            체험 시작하기</button>
+                    </div>
+                    <div class="glass-card p-8 rounded-3xl border-2 border-purple-500 relative">
+                        <div
+                            class="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
+                            Most Popular</div>
+                        <h3 class="text-xl font-bold mb-2">프리미엄</h3>
+                        <p class="text-gray-500 text-sm mb-6">국어 + 수학 올인원</p>
+                        <p class="text-3xl font-bold text-white mb-8">0<span class="text-lg text-gray-500 font-normal">
+                                / 1월
+                                한정 무료</span></p>
+                        <ul class="text-sm text-gray-300 space-y-4 mb-10">
+                            <li>• 국어/수학 전 과목 AI 첨삭</li>
+                            <li>• 고난도 문항 무제한 제출</li>
+                            <li>• 취약점 정밀 진단 시스템</li>
+                        </ul>
+                        <button onclick="openGradingModal()"
+                            class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white transition font-bold">무료
+                            체험 시작하기</button>
+                    </div>
+                    <div class="glass-card p-8 rounded-3xl border border-white/5">
+                        <h3 class="text-xl font-bold mb-2">연간 풀패키지</h3>
+                        <p class="text-gray-500 text-sm mb-6">수능까지 완벽 집중</p>
+                        <p class="text-3xl font-bold text-white mb-8">149만<span
+                                class="text-lg text-gray-500 font-normal"> /
+                                연</span></p>
+                        <ul class="text-sm text-gray-400 space-y-4 mb-10">
+                            <li>• 전 과목 프리미엄 모든 기능</li>
+                            <li>• 월 1회 대입 전략 상담</li>
+                            <li>• **20% 할인 혜택 포함**</li>
+                        </ul>
+                        <button
+                            class="w-full py-3 rounded-xl border border-white/10 hover:bg-white/5 transition font-bold">상담
+                            후
+                            결제</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-12 border-t border-white/5 px-6">
+            <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-gray-500 text-sm">
+                    © 2026 QUESTIO. All rights reserved. <br>
+                    사업자등록번호: [원장님 번호 입력] | 대표: [원장님 성함]
+                </div>
+                <div class="flex gap-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition">이용약관</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">개인정보처리방침</a>
+                </div>
+            </div>
+        </footer>
+
+        <div class="fixed bottom-8 right-8 z-50">
+            <a href="https://pf.kakao.com/_hanbaksa-TEST_/chat" target="_blank"
+                class="flex items-center gap-3 bg-[#FEE500] text-black px-6 py-4 rounded-full font-bold shadow-2xl hover:scale-110 transition-transform">
+                <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
+                    class="w-6 h-6">
+                원장님 직접 상담
+            </a>
+        </div>
+
+        <!-- Admin Node Modal (Replaces Grading Modal) -->
+        <div id="gradingModal" class="fixed inset-0 z-[100] hidden">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeGradingModal()"></div>
+
+            <!-- Dashboard Content -->
+            <div
+                class="absolute inset-4 md:inset-10 bg-[#0a0a0c] border border-white/10 rounded-3xl overflow-hidden flex flex-col shadow-2xl">
+
+                <!-- Header -->
+                <div class="flex items-center justify-between px-8 py-6 border-b border-white/5 bg-[#13111c]">
+                    <div>
+                        <h1 class="text-3xl font-['Outfit'] font-bold text-white tracking-widest">ADMIN <span
+                                class="text-blue-500">NODE</span></h1>
+                        <div class="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            TIME-SERIES GROWTH MONITOR
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button class="bg-[#1c1a26] border border-white/10 px-4 py-2 rounded-lg text-sm text-gray-300">
+                            STANDARD AI (v3.5)
                         </button>
+                        <button onclick="closeGradingModal()"
+                            class="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Body -->
+                <div class="flex-1 overflow-y-auto p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 custom-scrollbar">
+
+                    <!-- Left Column: Database & Context (7 cols) -->
+                    <div class="lg:col-span-7 flex flex-col gap-6">
+
+                        <!-- 1. Master Database Sync -->
+                        <div class="bg-[#13111c] border border-blue-500/20 rounded-2xl p-6 relative overflow-hidden">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-blue-400 font-bold text-sm tracking-wider">MASTER DATABASE SYNC
+                                </h3>
+                                <span id="recordCount" class="text-xs text-blue-500 font-mono">0 RECORDS</span>
+                            </div>
+                            <div
+                                class="flex items-center gap-4 bg-[#0a0a0c] border border-white/10 rounded-xl p-2 px-4">
+                                <div class="flex-1 truncate text-gray-500 text-sm font-mono" id="syncFileName">
+                                    No CSV Loaded
+                                </div>
+                                <input type="file" id="csvInput" accept=".csv" class="hidden"
+                                    onchange="handleCSVUpload(this)">
+                                <button onclick="document.getElementById('csvInput').click()"
+                                    class="text-xs text-gray-400 hover:text-white uppercase font-bold">File</button>
+                                <button onclick="document.getElementById('csvInput').click()"
+                                    class="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow-[0_0_15px_rgba(59,130,246,0.5)]">SYNC</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. Filters -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">University</label>
+                                <input type="text" id="filterUniversity" placeholder="아주대학교"
+                                    class="w-full bg-[#13111c] border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:outline-none font-bold text-lg placeholder-gray-700 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Year</label>
+                                <input type="text" id="filterYear" placeholder="2025"
+                                    class="w-full bg-[#13111c] border border-white/10 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:outline-none font-bold text-lg placeholder-gray-700 transition">
+                            </div>
+                        </div>
+
+                        <!-- 3. Matched Styles (Problem List) -->
+                        <div>
+                            <!-- Search Action -->
+                            <button onclick="filterProblems()"
+                                class="w-full py-4 bg-[#1c1a26] border border-white/10 rounded-xl text-gray-400 font-bold hover:text-white hover:border-blue-500 hover:bg-blue-500/10 transition flex items-center justify-center gap-2 group mb-4">
+                                <svg class="h-5 w-5 text-blue-500 group-hover:scale-110 transition" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                문제유형 선택 (조건 검색)
+                            </button>
+
+                            <div
+                                class="flex-1 bg-[#13111c] border border-white/5 rounded-2xl p-4 min-h-[200px] max-h-[300px] overflow-y-auto custom-scrollbar">
+                                <h4
+                                    class="text-blue-500 text-xs font-bold uppercase mb-4 sticky top-0 bg-[#13111c] py-2 z-10">
+                                    Matched Styles</h4>
+                                <div id="problemList" class="space-y-2">
+                                    <div class="text-gray-600 text-center py-10 text-sm">필터를 입력하고 검색 버튼을 누르세요.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Dynamic Details (Assets & Context) -->
+                        <!-- Automatically populated on selection -->
+                        <div id="problemDetails" class="hidden grid grid-cols-2 gap-4 animation-fade-in">
+                            <!-- Problem Asset -->
+                            <div class="bg-[#13111c] border border-white/5 rounded-2xl p-4">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-xs">PROBLEM ASSETS</h5>
+                                        <p class="text-[10px] text-gray-600">Cloud Reference</p>
+                                    </div>
+                                </div>
+                                <div class="bg-[#0a0a0c] border border-white/10 rounded-lg p-3 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                    </svg>
+                                    <span id="detailProblemName" class="text-xs text-blue-400 truncate flex-1">오전) 문제
+                                        (Cloud)</span>
+                                </div>
+                            </div>
+
+                            <!-- Solution Key -->
+                            <div class="bg-[#13111c] border border-white/5 rounded-2xl p-4">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-xs">SOLUTION KEYS</h5>
+                                        <p class="text-[10px] text-gray-600">Grading Matrix</p>
+                                    </div>
+                                </div>
+                                <div class="bg-[#0a0a0c] border border-white/10 rounded-lg p-3 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                    </svg>
+                                    <span id="detailSolutionName" class="text-xs text-blue-400 truncate flex-1">오전) 해설
+                                        (Cloud)</span>
+                                </div>
+                            </div>
+
+                            <!-- AI Context -->
+                            <div class="col-span-2 bg-[#13111c] border border-white/5 rounded-2xl p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h5 class="text-[#888] font-bold text-xs uppercase">AI Scoring Context
+                                        (Editable)</h5>
+                                    <button id="aiSearchBtn" disabled
+                                        class="text-[10px] font-bold px-2 py-1 rounded bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 transition opacity-50 cursor-not-allowed">
+                                        🔍 AI SEARCH
+                                    </button>
+                                </div>
+                                <textarea id="detailContext"
+                                    class="w-full bg-[#0a0a0c] border border-white/20 p-4 text-gray-400 text-xs font-mono leading-relaxed h-[100px] overflow-y-auto custom-scrollbar resize-none focus:outline-none focus:border-blue-500 rounded-lg"
+                                    placeholder="유형 선택 시 공식 채점 기준이 로드됩니다. 필요 시 직접 수정하거나 입력하세요."></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column: Student Management (5 cols) -->
+                    <div class="lg:col-span-5 flex flex-col h-full">
 
                         <div
-                            class="flex-1 bg-[#13111c] border border-white/5 rounded-2xl p-4 min-h-[200px] max-h-[300px] overflow-y-auto custom-scrollbar">
-                            <h4
-                                class="text-blue-500 text-xs font-bold uppercase mb-4 sticky top-0 bg-[#13111c] py-2 z-10">
-                                Matched Styles</h4>
-                            <div id="problemList" class="space-y-2">
-                                <div class="text-gray-600 text-center py-10 text-sm">필터를 입력하고 검색 버튼을 누르세요.</div>
-                            </div>
-                        </div>
-                    </div>
+                            class="bg-[#13111c] border border-white/5 rounded-2xl p-6 flex-1 flex flex-col relative overflow-hidden group">
 
-                    <!-- 4. Dynamic Details (Assets & Context) -->
-                    <!-- Automatically populated on selection -->
-                    <div id="problemDetails" class="hidden grid grid-cols-2 gap-4 animation-fade-in">
-                        <!-- Problem Asset -->
-                        <div class="bg-[#13111c] border border-white/5 rounded-2xl p-4">
-                            <div class="flex items-center gap-3 mb-2">
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                        </path>
-                                    </svg>
+                            <div class="flex items-center justify-between mb-6 z-10 relative">
+                                <div>
+                                    <h3 class="text-white font-bold text-sm">STUDENT MANAGEMENT</h3>
+                                    <p class="text-xs text-gray-600">수직 촬영 & 그림자 제거</p>
+                                </div>
+                                <button onclick="toggleStudentInput()"
+                                    class="bg-blue-600/20 text-blue-500 hover:bg-blue-600/30 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-blue-500/30 transition">+
+                                    ADD STUDENT</button>
+                            </div>
+
+                            <!-- Student Info Input -->
+                            <div class="space-y-3 mb-4 z-10 relative">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1">STUDENT
+                                        NAME</label>
+                                    <input type="text" id="studentName" placeholder="예: 송민수"
+                                        class="w-full bg-[#0a0a0c] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none transition">
                                 </div>
                                 <div>
-                                    <h5 class="text-white font-bold text-xs">PROBLEM ASSETS</h5>
-                                    <p class="text-[10px] text-gray-600">Cloud Reference</p>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1">EMAIL
+                                        (Optional)</label>
+                                    <input type="email" id="studentEmail" placeholder="student@example.com"
+                                        class="w-full bg-[#0a0a0c] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none transition">
                                 </div>
                             </div>
-                            <div class="bg-[#0a0a0c] border border-white/10 rounded-lg p-3 flex items-center gap-2">
-                                <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                                </svg>
-                                <span id="detailProblemName" class="text-xs text-blue-400 truncate flex-1">오전) 문제
-                                    (Cloud)</span>
-                            </div>
-                        </div>
 
-                        <!-- Solution Key -->
-                        <div class="bg-[#13111c] border border-white/5 rounded-2xl p-4">
-                            <div class="flex items-center gap-3 mb-2">
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h5 class="text-white font-bold text-xs">SOLUTION KEYS</h5>
-                                    <p class="text-[10px] text-gray-600">Grading Matrix</p>
-                                </div>
-                            </div>
-                            <div class="bg-[#0a0a0c] border border-white/10 rounded-lg p-3 flex items-center gap-2">
-                                <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                                </svg>
-                                <span id="detailSolutionName" class="text-xs text-blue-400 truncate flex-1">오전) 해설
-                                    (Cloud)</span>
-                            </div>
-                        </div>
+                            <!-- Dropzone -->
+                            <div class="flex-1 border-2 border-dashed border-white/5 rounded-xl relative hover:border-blue-500/30 transition group-hover:bg-[#151320] cursor-pointer z-10 min-h-[150px]"
+                                onclick="document.getElementById('answerInput').click()">
+                                <input type="file" id="answerInput" accept="image/*" multiple class="hidden"
+                                    onchange="handleAnswerUpload(this)">
 
-                        <!-- AI Context -->
-                        <div class="col-span-2 bg-[#13111c] border border-white/5 rounded-2xl p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <h5 class="text-[#888] font-bold text-xs uppercase">AI Scoring Context (Editable)</h5>
-                                <button id="aiSearchBtn" disabled
-                                    class="text-[10px] font-bold px-2 py-1 rounded bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 transition opacity-50 cursor-not-allowed">
-                                    🔍 AI SEARCH
+                                <div id="answerPlaceholder"
+                                    class="absolute inset-0 flex flex-col items-center justify-center text-gray-600 group-hover:text-blue-500/50 transition duration-300">
+                                    <span class="text-3xl mb-2">+</span>
+                                    <span class="text-xs font-bold tracking-widest">답안 이미지 업로드 (다중 선택 가능)</span>
+                                </div>
+
+                                <div id="previewGrid"
+                                    class="absolute inset-0 p-4 grid grid-cols-2 gap-2 overflow-y-auto hidden custom-scrollbar bg-[#0a0a0c]/80 backdrop-blur-sm">
+                                </div>
+                            </div>
+
+                            <!-- Main Action -->
+                            <div class="mt-6 z-10">
+                                <button id="mainActionBtn" onclick="startBatchAnalysis()"
+                                    class="w-full py-4 rounded-xl bg-[#1e1b2e] text-gray-600 font-bold text-sm border border-transparent transition-all cursor-not-allowed uppercase tracking-wider block"
+                                    disabled>
+                                    START BATCH ANALYSIS
                                 </button>
                             </div>
-                            <textarea id="detailContext"
-                                class="w-full bg-[#0a0a0c] border border-white/20 p-4 text-gray-400 text-xs font-mono leading-relaxed h-[100px] overflow-y-auto custom-scrollbar resize-none focus:outline-none focus:border-blue-500 rounded-lg"
-                                placeholder="유형 선택 시 공식 채점 기준이 로드됩니다. 필요 시 직접 수정하거나 입력하세요."></textarea>
-                        </div>
-                    </div>
 
+                            <!-- Report Section (Initially Hidden) -->
+                            <div id="reportSection" class="mt-12 pt-12 border-t border-white/10 hidden">
+                                <!-- Report Header -->
+                                <div class="flex items-center justify-between mb-8">
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-white mb-1">AI 평가 보고서</h2>
+                                        <p id="reportContext" class="text-xs text-gray-500">2025학년도 아주대학교 (Math)
+                                        </p>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button onclick="downloadPDF()"
+                                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold transition flex items-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4">
+                                                </path>
+                                            </svg>
+                                            PDF 저장
+                                        </button>
+                                        <button onclick="downloadHTML()"
+                                            class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs font-bold transition flex items-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                                </path>
+                                            </svg>
+                                            HTML 저장
+                                        </button>
+                                        <button onclick="closeReport()"
+                                            class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded text-xs text-gray-400 transition">
+                                            접기 (Hide)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Report Body Holder -->
+                                <div id="reportBody" class="min-h-[400px]">
+                                    <!-- AI Content will be injected here -->
+                                </div>
+                            </div>
+
+                            <!-- BG Decoration -->
+                            <div
+                                class="absolute -bottom-20 -right-20 w-60 h-60 bg-blue-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/10 transition duration-700">
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
-                <!-- Right Column: Student Management (5 cols) -->
-                <div class="lg:col-span-5 flex flex-col h-full">
-
-                    <div
-                        class="bg-[#13111c] border border-white/5 rounded-2xl p-6 flex-1 flex flex-col relative overflow-hidden group">
-
-                        <div class="flex items-center justify-between mb-6 z-10 relative">
-                            <div>
-                                <h3 class="text-white font-bold text-sm">STUDENT MANAGEMENT</h3>
-                                <p class="text-xs text-gray-600">수직 촬영 & 그림자 제거</p>
+                <!-- Progress Overlay (Same as before) -->
+                <div id="progressOverlay"
+                    class="absolute inset-0 bg-black/90 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden">
+                    <div class="w-full max-w-lg p-8 relative">
+                        <!-- Progress Card -->
+                        <div class="bg-[#13111c] border border-blue-500/20 rounded-2xl p-6 shadow-2xl">
+                            <div class="flex items-center justify-between text-white mb-4">
+                                <span class="font-bold flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                                    AI Analysis In Progress
+                                </span>
+                                <span id="progressPercent" class="text-blue-500 font-mono">0%</span>
                             </div>
-                            <button onclick="toggleStudentInput()"
-                                class="bg-blue-600/20 text-blue-500 hover:bg-blue-600/30 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-blue-500/30 transition">+
-                                ADD STUDENT</button>
+                            <div class="w-full bg-gray-800 rounded-full h-1.5 mb-8 overflow-hidden">
+                                <div id="progressBar"
+                                    class="bg-gradient-to-r from-blue-600 to-cyan-400 h-full rounded-full transition-all duration-300 relative"
+                                    style="width: 0%">
+                                    <div class="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4 font-mono text-sm">
+                                <div id="taskFormula"
+                                    class="flex items-center gap-4 text-gray-600 transition-colors duration-300">
+                                    <div
+                                        class="w-4 h-4 rounded border border-current flex items-center justify-center text-[10px]">
+                                        1</div>
+                                    <span>수식 검증 (Formula Check)</span>
+                                </div>
+                                <div id="taskLogic"
+                                    class="flex items-center gap-4 text-gray-600 transition-colors duration-300">
+                                    <div
+                                        class="w-4 h-4 rounded border border-current flex items-center justify-center text-[10px]">
+                                        2</div>
+                                    <span>논리 진단 (Logic Flow)</span>
+                                </div>
+                                <div id="taskFeedback"
+                                    class="flex items-center gap-4 text-gray-600 transition-colors duration-300">
+                                    <div
+                                        class="w-4 h-4 rounded border border-current flex items-center justify-center text-[10px]">
+                                        3</div>
+                                    <span>피드백 생성 (Generating Feedback)</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Student Info Input -->
-                        <div class="space-y-3 mb-4 z-10 relative">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 mb-1">STUDENT NAME</label>
-                                <input type="text" id="studentName" placeholder="예: 송민수"
-                                    class="w-full bg-[#0a0a0c] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none transition">
+                        <!-- Result Card (Pop up) -->
+                        <div id="resultArea" class="mt-4 hidden animation-slide-up">
+                            <div
+                                class="p-6 bg-[#0a0a0c] rounded-2xl border border-green-500/30 text-gray-300 text-sm max-h-[300px] overflow-y-auto custom-scrollbar shadow-2xl relative">
+                                <div
+                                    class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-500">
+                                </div>
+                                <div id="resultText" class="leading-relaxed whitespace-pre-wrap"></div>
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 mb-1">EMAIL (Optional)</label>
-                                <input type="email" id="studentEmail" placeholder="student@example.com"
-                                    class="w-full bg-[#0a0a0c] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 focus:outline-none transition">
-                            </div>
-                        </div>
-
-                        <!-- Dropzone -->
-                        <div class="flex-1 border-2 border-dashed border-white/5 rounded-xl relative hover:border-blue-500/30 transition group-hover:bg-[#151320] cursor-pointer z-10 min-h-[150px]"
-                            onclick="document.getElementById('answerInput').click()">
-                            <input type="file" id="answerInput" accept="image/*" multiple class="hidden"
-                                onchange="handleAnswerUpload(this)">
-
-                            <div id="answerPlaceholder"
-                                class="absolute inset-0 flex flex-col items-center justify-center text-gray-600 group-hover:text-blue-500/50 transition duration-300">
-                                <span class="text-3xl mb-2">+</span>
-                                <span class="text-xs font-bold tracking-widest">답안 이미지 업로드 (다중 선택 가능)</span>
-                            </div>
-
-                            <div id="previewGrid"
-                                class="absolute inset-0 p-4 grid grid-cols-2 gap-2 overflow-y-auto hidden custom-scrollbar bg-[#0a0a0c]/80 backdrop-blur-sm">
-                            </div>
-                        </div>
-
-                        <!-- Main Action -->
-                        <div class="mt-6 z-10">
-                            <button id="mainActionBtn" onclick="startBatchAnalysis()"
-                                class="w-full py-4 rounded-xl bg-[#1e1b2e] text-gray-600 font-bold text-sm border border-transparent transition-all cursor-not-allowed uppercase tracking-wider block"
-                                disabled>
-                                START BATCH ANALYSIS
+                            <button onclick="closeProgress()"
+                                class="w-full mt-4 py-4 bg-[#1c1a26] hover:bg-white/10 border border-white/10 text-white rounded-xl font-bold transition uppercase tracking-widest">
+                                확인 완료 (CLOSE)
                             </button>
                         </div>
-
-                        <!-- Report Section (Initially Hidden) -->
-                        <div id="reportSection" class="mt-12 pt-12 border-t border-white/10 hidden">
-                            <!-- Report Header -->
-                            <div class="flex items-center justify-between mb-8">
-                                <div>
-                                    <h2 class="text-2xl font-bold text-white mb-1">AI 평가 보고서</h2>
-                                    <p id="reportContext" class="text-xs text-gray-500">2025학년도 아주대학교 (Math)</p>
-                                </div>
-                                <button onclick="closeReport()"
-                                    class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded text-xs text-gray-400 transition">
-                                    접기 (Hide)
-                                </button>
-                            </div>
-
-                            <!-- Report Body Holder -->
-                            <div id="reportBody" class="min-h-[400px]">
-                                <!-- AI Content will be injected here -->
-                            </div>
-                        </div>
-
-                        <!-- BG Decoration -->
-                        <div
-                            class="absolute -bottom-20 -right-20 w-60 h-60 bg-blue-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/10 transition duration-700">
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Progress Overlay (Same as before) -->
-            <div id="progressOverlay"
-                class="absolute inset-0 bg-black/90 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden">
-                <div class="w-full max-w-lg p-8 relative">
-                    <!-- Progress Card -->
-                    <div class="bg-[#13111c] border border-blue-500/20 rounded-2xl p-6 shadow-2xl">
-                        <div class="flex items-center justify-between text-white mb-4">
-                            <span class="font-bold flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                                AI Analysis In Progress
-                            </span>
-                            <span id="progressPercent" class="text-blue-500 font-mono">0%</span>
-                        </div>
-                        <div class="w-full bg-gray-800 rounded-full h-1.5 mb-8 overflow-hidden">
-                            <div id="progressBar"
-                                class="bg-gradient-to-r from-blue-600 to-cyan-400 h-full rounded-full transition-all duration-300 relative"
-                                style="width: 0%">
-                                <div class="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]"></div>
-                            </div>
-                        </div>
-
-                        <div class="space-y-4 font-mono text-sm">
-                            <div id="taskFormula"
-                                class="flex items-center gap-4 text-gray-600 transition-colors duration-300">
-                                <div
-                                    class="w-4 h-4 rounded border border-current flex items-center justify-center text-[10px]">
-                                    1</div>
-                                <span>수식 검증 (Formula Check)</span>
-                            </div>
-                            <div id="taskLogic"
-                                class="flex items-center gap-4 text-gray-600 transition-colors duration-300">
-                                <div
-                                    class="w-4 h-4 rounded border border-current flex items-center justify-center text-[10px]">
-                                    2</div>
-                                <span>논리 진단 (Logic Flow)</span>
-                            </div>
-                            <div id="taskFeedback"
-                                class="flex items-center gap-4 text-gray-600 transition-colors duration-300">
-                                <div
-                                    class="w-4 h-4 rounded border border-current flex items-center justify-center text-[10px]">
-                                    3</div>
-                                <span>피드백 생성 (Generating Feedback)</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Result Card (Pop up) -->
-                    <div id="resultArea" class="mt-4 hidden animation-slide-up">
-                        <div
-                            class="p-6 bg-[#0a0a0c] rounded-2xl border border-green-500/30 text-gray-300 text-sm max-h-[300px] overflow-y-auto custom-scrollbar shadow-2xl relative">
-                            <div
-                                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-500">
-                            </div>
-                            <div id="resultText" class="leading-relaxed whitespace-pre-wrap"></div>
-                        </div>
-                        <button onclick="closeProgress()"
-                            class="w-full mt-4 py-4 bg-[#1c1a26] hover:bg-white/10 border border-white/10 text-white rounded-xl font-bold transition uppercase tracking-widest">
-                            확인 완료 (CLOSE)
-                        </button>
                     </div>
                 </div>
+
             </div>
+        </div>
+
+        <!-- Report Modal (Full Screen) -->
+
+
+
+
+
+
+
+
+
 
         </div>
-    </div>
+        </div>
 
-    <!-- Report Modal (Full Screen) -->
+        <script>
+            window.onerror = function (msg, url, line, col, error) {
+                console.error("Global Error:", msg, url, line);
+                // alert("System Error: " + msg); // Optional for user visibility
+            };
 
+            // --- GLOBAL UI VARIABLES ---
+            window.problemsData = [];
+            window.currentProblemId = null;
+            window.selectedFiles = [];
 
+            // --- ROBUST UI FUNCTIONS (Non-Module) ---
 
-
-
-
-
-
-
-
-    </div>
-    </div>
-
-    <script>
-        window.onerror = function (msg, url, line, col, error) {
-            console.error("Global Error:", msg, url, line);
-            // alert("System Error: " + msg); // Optional for user visibility
-        };
-
-        // --- GLOBAL UI VARIABLES ---
-        window.problemsData = [];
-        window.currentProblemId = null;
-        window.selectedFiles = [];
-
-        // --- ROBUST UI FUNCTIONS (Non-Module) ---
-
-        window.toggleStudentInput = function () {
-            document.getElementById('studentName').value = '';
-            document.getElementById('studentEmail').value = '';
-            document.getElementById('studentName').focus();
-            const btn = event.currentTarget;
-            if (btn) {
-                const originalText = btn.innerText;
-                btn.innerText = "READY!";
-                setTimeout(() => btn.innerText = originalText, 1000);
-            }
-        };
-
-        window.handleAnswerUpload = function (input) {
-            if (input.files) {
-                const grid = document.getElementById('previewGrid');
-                const placeholder = document.getElementById('answerPlaceholder');
-                window.selectedFiles = Array.from(input.files);
-
-                if (window.selectedFiles.length > 0) {
-                    placeholder.classList.add('hidden');
-                    grid.classList.remove('hidden');
-                    grid.innerHTML = '';
-                    window.selectedFiles.forEach((file, idx) => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.className = "w-full h-32 object-cover rounded-lg border border-white/10";
-                            grid.appendChild(img);
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                    const btn = document.getElementById('mainActionBtn');
-                    btn.disabled = false;
-                    btn.classList.remove('cursor-not-allowed', 'text-gray-600');
-                    btn.classList.add('hover:bg-blue-600', 'text-white', 'cursor-pointer', 'bg-blue-500');
-                    btn.innerText = `START BATCH ANALYSIS (${window.selectedFiles.length})`;
+            window.toggleStudentInput = function () {
+                document.getElementById('studentName').value = '';
+                document.getElementById('studentEmail').value = '';
+                document.getElementById('studentName').focus();
+                const btn = event.currentTarget;
+                if (btn) {
+                    const originalText = btn.innerText;
+                    btn.innerText = "READY!";
+                    setTimeout(() => btn.innerText = originalText, 1000);
                 }
-            }
-        };
+            };
 
-        window.openGradingModal = async function () {
-            const modal = document.getElementById('gradingModal');
-            if (modal) {
-                modal.classList.remove('hidden');
-            }
+            window.handleAnswerUpload = function (input) {
+                if (input.files) {
+                    const grid = document.getElementById('previewGrid');
+                    const placeholder = document.getElementById('answerPlaceholder');
+                    window.selectedFiles = Array.from(input.files);
 
-            const studentInput = document.getElementById('studentName');
-            if (studentInput && !studentInput.value) {
-                studentInput.value = "미래의 합격생 (Guest)";
-            }
+                    if (window.selectedFiles.length > 0) {
+                        placeholder.classList.add('hidden');
+                        grid.classList.remove('hidden');
+                        grid.innerHTML = '';
+                        window.selectedFiles.forEach((file, idx) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.className = "w-full h-32 object-cover rounded-lg border border-white/10";
+                                grid.appendChild(img);
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                        const btn = document.getElementById('mainActionBtn');
+                        btn.disabled = false;
+                        btn.classList.remove('cursor-not-allowed', 'text-gray-600');
+                        btn.classList.add('hover:bg-blue-600', 'text-white', 'cursor-pointer', 'bg-blue-500');
+                        btn.innerText = `START BATCH ANALYSIS (${window.selectedFiles.length})`;
+                    }
+                }
+            };
 
-            await window.fetchProblems();
-        };
+            window.openGradingModal = async function () {
+                const modal = document.getElementById('gradingModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                }
 
-        window.closeGradingModal = function () {
-            document.getElementById('gradingModal').classList.add('hidden');
-        };
+                const studentInput = document.getElementById('studentName');
+                if (studentInput && !studentInput.value) {
+                    studentInput.value = "미래의 합격생 (Guest)";
+                }
 
-        window.fetchProblems = async function (file = null) {
-            if (file) {
-                // Forward to handleCSV for consistency if needed, or parse directly
-                // For now, simple file read:
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    window.parseCSV(e.target.result);
+                await window.fetchProblems();
+            };
+
+            window.closeGradingModal = function () {
+                document.getElementById('gradingModal').classList.add('hidden');
+            };
+
+            window.fetchProblems = async function (file = null) {
+                if (file) {
+                    // Forward to handleCSV for consistency if needed, or parse directly
+                    // For now, simple file read:
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        window.parseCSV(e.target.result);
+                        window.filterProblems();
+                    };
+                    reader.readAsText(file, 'UTF-8');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/sampleProbs.csv');
+                    if (!response.ok) throw new Error("Failed to load sample CSV");
+                    const text = await response.text();
+                    window.parseCSV(text);
                     window.filterProblems();
-                };
-                reader.readAsText(file, 'UTF-8');
-                return;
-            }
+                } catch (e) {
+                    console.error("CSV Error:", e);
+                    document.getElementById('problemList').innerHTML = `<div class="text-red-500 text-center">데이터 로드 실패</div>`;
+                }
+            };
 
-            try {
-                const response = await fetch('/sampleProbs.csv');
-                if (!response.ok) throw new Error("Failed to load sample CSV");
-                const text = await response.text();
-                window.parseCSV(text);
-                window.filterProblems();
-            } catch (e) {
-                console.error("CSV Error:", e);
-                document.getElementById('problemList').innerHTML = `<div class="text-red-500 text-center">데이터 로드 실패</div>`;
-            }
-        };
+            window.parseCSV = function (text) {
+                if (!text || text.trim() === '') return;
+                const rows = [];
+                let currentRow = [];
+                let currentVal = '';
+                let insideQuotes = false;
+                text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-        window.parseCSV = function (text) {
-            if (!text || text.trim() === '') return;
-            const rows = [];
-            let currentRow = [];
-            let currentVal = '';
-            let insideQuotes = false;
-            text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const nextChar = text[i + 1];
+                    if (char === '"') {
+                        if (insideQuotes && nextChar === '"') { currentVal += '"'; i++; }
+                        else { insideQuotes = !insideQuotes; }
+                    } else if (char === ',' && !insideQuotes) {
+                        currentRow.push(currentVal); currentVal = '';
+                    } else if (char === '\n' && !insideQuotes) {
+                        currentRow.push(currentVal);
+                        if (currentRow.length > 0) rows.push(currentRow);
+                        currentRow = []; currentVal = '';
+                    } else { currentVal += char; }
+                }
+                if (currentVal || currentRow.length > 0) { currentRow.push(currentVal); rows.push(currentRow); }
 
-            for (let i = 0; i < text.length; i++) {
-                const char = text[i];
-                const nextChar = text[i + 1];
-                if (char === '"') {
-                    if (insideQuotes && nextChar === '"') { currentVal += '"'; i++; }
-                    else { insideQuotes = !insideQuotes; }
-                } else if (char === ',' && !insideQuotes) {
-                    currentRow.push(currentVal); currentVal = '';
-                } else if (char === '\n' && !insideQuotes) {
-                    currentRow.push(currentVal);
-                    if (currentRow.length > 0) rows.push(currentRow);
-                    currentRow = []; currentVal = '';
-                } else { currentVal += char; }
-            }
-            if (currentVal || currentRow.length > 0) { currentRow.push(currentVal); rows.push(currentRow); }
+                if (rows.length < 2) return;
+                const headers = rows[0].map(h => h.trim().toLowerCase());
+                const findIndex = (keywords) => headers.findIndex(h => keywords.some(k => h.includes(k)));
 
-            if (rows.length < 2) return;
-            const headers = rows[0].map(h => h.trim().toLowerCase());
-            const findIndex = (keywords) => headers.findIndex(h => keywords.some(k => h.includes(k)));
+                const idxId = findIndex(['id', '번호']);
+                const idxUnivName = findIndex(['대학교 이름', 'university', 'univ']);
+                const idxYearCol = findIndex(['출제 년도', 'year']);
+                const idxProbType = findIndex(['문제 유형', 'question', 'subject']);
+                const idxProbUrl = findIndex(['문제 url', 'url', 'link']);
+                const idxSolUrl = findIndex(['풀이 url', 'solution']);
+                const idxCrit = findIndex(['criteria', 'standard', '기준']);
 
-            const idxId = findIndex(['id', '번호']);
-            const idxUnivName = findIndex(['대학교 이름', 'university', 'univ']);
-            const idxYearCol = findIndex(['출제 년도', 'year']);
-            const idxProbType = findIndex(['문제 유형', 'question', 'subject']);
-            const idxProbUrl = findIndex(['문제 url', 'url', 'link']);
-            const idxSolUrl = findIndex(['풀이 url', 'solution']);
-            const idxCrit = findIndex(['criteria', 'standard', '기준']);
+                window.problemsData = rows.slice(1).map((cols, i) => {
+                    if (cols.length < 2) return null;
+                    const getCol = (idx) => idx > -1 ? cols[idx] : "";
 
-            window.problemsData = rows.slice(1).map((cols, i) => {
-                if (cols.length < 2) return null;
-                const getCol = (idx) => idx > -1 ? cols[idx] : "";
-
-                // Generic Criteria Fallback
-                const genericCriteria = `[AI 수리논술 표준 채점 기준]
+                    // Generic Criteria Fallback
+                    const genericCriteria = `[AI 수리논술 표준 채점 기준]
 1. 문제 이해 (20점)
 - 제시문의 핵심 원리 파악 여부
 - 문제에서 요구하는 조건들을 누락 없이 확인했는가
@@ -784,51 +835,51 @@
 4. 가독성 (10점)
 - 글씨 및 수식의 정돈 상태`;
 
-                let crit = getCol(idxCrit);
-                if (!crit) crit = genericCriteria;
+                    let crit = getCol(idxCrit);
+                    if (!crit) crit = genericCriteria;
 
-                return {
-                    id: getCol(idxId) || `Q${String(i + 1).padStart(3, '0')}`,
-                    university: getCol(idxUnivName) || 'Unknown',
-                    year: getCol(idxYearCol) || '2025',
-                    subject: "수리논술", // Hardcoded for sample
-                    question: getCol(idxProbType) || "논술 문제",
-                    criteria: crit,
-                    model_answer: "",
-                    problem_url: getCol(idxProbUrl),
-                    solution_url: getCol(idxSolUrl),
-                    raw: cols.join(',')
-                };
-            }).filter(p => p && p.university !== "Unknown");
+                    return {
+                        id: getCol(idxId) || `Q${String(i + 1).padStart(3, '0')}`,
+                        university: getCol(idxUnivName) || 'Unknown',
+                        year: getCol(idxYearCol) || '2025',
+                        subject: "수리논술", // Hardcoded for sample
+                        question: getCol(idxProbType) || "논술 문제",
+                        criteria: crit,
+                        model_answer: "",
+                        problem_url: getCol(idxProbUrl),
+                        solution_url: getCol(idxSolUrl),
+                        raw: cols.join(',')
+                    };
+                }).filter(p => p && p.university !== "Unknown");
 
-            // Sort
-            window.problemsData.sort((a, b) => a.university.localeCompare(b.university) || a.year.localeCompare(b.year));
-            const countEl = document.getElementById('recordCount');
-            if (countEl) countEl.innerText = `${window.problemsData.length} RECORDS`;
-        };
+                // Sort
+                window.problemsData.sort((a, b) => a.university.localeCompare(b.university) || a.year.localeCompare(b.year));
+                const countEl = document.getElementById('recordCount');
+                if (countEl) countEl.innerText = `${window.problemsData.length} RECORDS`;
+            };
 
-        window.filterProblems = function () {
-            const univ = document.getElementById('filterUniversity').value.toLowerCase();
-            const year = document.getElementById('filterYear').value;
-            let filtered = window.problemsData.filter(p => {
-                const matchUniv = !univ || p.university.toLowerCase().includes(univ);
-                const matchYear = !year || p.year.includes(year);
-                return matchUniv && matchYear;
-            });
-            window.renderProblems(filtered);
-        };
+            window.filterProblems = function () {
+                const univ = document.getElementById('filterUniversity').value.toLowerCase();
+                const year = document.getElementById('filterYear').value;
+                let filtered = window.problemsData.filter(p => {
+                    const matchUniv = !univ || p.university.toLowerCase().includes(univ);
+                    const matchYear = !year || p.year.includes(year);
+                    return matchUniv && matchYear;
+                });
+                window.renderProblems(filtered);
+            };
 
-        window.renderProblems = function (items) {
-            const list = document.getElementById('problemList');
-            list.innerHTML = '';
-            if (items.length === 0) {
-                list.innerHTML = '<div class="text-gray-600 text-center py-10 text-sm">검색 결과가 없습니다.</div>';
-                return;
-            }
-            items.forEach(p => {
-                const div = document.createElement('div');
-                div.className = "group bg-[#0a0a0c] border border-white/5 rounded-xl p-4 hover:border-blue-500/50 hover:bg-blue-500/5 transition cursor-pointer flex items-center justify-between";
-                div.innerHTML = `
+            window.renderProblems = function (items) {
+                const list = document.getElementById('problemList');
+                list.innerHTML = '';
+                if (items.length === 0) {
+                    list.innerHTML = '<div class="text-gray-600 text-center py-10 text-sm">검색 결과가 없습니다.</div>';
+                    return;
+                }
+                items.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = "group bg-[#0a0a0c] border border-white/5 rounded-xl p-4 hover:border-blue-500/50 hover:bg-blue-500/5 transition cursor-pointer flex items-center justify-between";
+                    div.innerHTML = `
                     <div class="flex-1 truncate">
                          <div class="flex items-center gap-2 mb-1">
                               <span class="text-blue-500 text-[10px] font-bold px-2 py-0.5 bg-blue-500/10 rounded border border-blue-500/20">${p.year}</span>
@@ -838,271 +889,333 @@
                     </div>
                     <div class="text-gray-600 group-hover:text-blue-500 transition">▶</div>
                  `;
-                div.onclick = () => window.selectProblem(p);
-                list.appendChild(div);
-            });
-        };
-
-        window.selectProblem = function (p) {
-            window.currentProblemId = p.id;
-            document.getElementById('problemDetails').classList.remove('hidden');
-            const setText = (id, text) => {
-                const el = document.getElementById(id);
-                if (el) el.innerText = text;
+                    div.onclick = () => window.selectProblem(p);
+                    list.appendChild(div);
+                });
             };
 
-            setText('detailTitle', p.question);
-            setText('detailUnivMatch', `${p.university} ${p.year}`);
+            window.selectProblem = function (p) {
+                window.currentProblemId = p.id;
+                document.getElementById('problemDetails').classList.remove('hidden');
+                const setText = (id, text) => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerText = text;
+                };
 
-            // Update Asset Links
-            const probLink = document.getElementById('problemLink');
-            const solLink = document.getElementById('solutionLink');
-            if (probLink) {
-                probLink.href = p.problem_url || "#";
-                probLink.innerHTML = p.problem_url ? `<span class="text-blue-400 hover:text-blue-300">🔗 문제 보기 (PDF)</span>` : `<span class="text-gray-600">문제 파일 없음</span>`;
-                probLink.target = "_blank";
-            }
-            if (solLink) {
-                solLink.href = p.solution_url || "#";
-                solLink.innerHTML = p.solution_url ? `<span class="text-blue-400 hover:text-blue-300">🔗 해설 보기 (PDF)</span>` : `<span class="text-gray-600">해설 파일 없음</span>`;
-                solLink.target = "_blank";
-            }
+                setText('detailTitle', p.question);
+                setText('detailUnivMatch', `${p.university} ${p.year}`);
 
-            // Update Search Button State
-            const searchBtn = document.getElementById('aiSearchBtn');
-            if (searchBtn) {
-                // p.university and p.year are already available here
-                searchBtn.onclick = () => window.searchContext(p.university, p.year, p.subject);
-                searchBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                searchBtn.disabled = false;
-            }
-
-            window.simulateContextSearch(p);
-        };
-
-        window.searchContext = async function (univ, year, type) {
-            const contextArea = document.getElementById('detailContext');
-            const btn = document.getElementById('aiSearchBtn');
-
-            if (!univ) { alert("대학교 정보가 없습니다."); return; }
-
-            // UI Feedback
-            btn.innerText = "SEARCHING...";
-            btn.classList.add('animate-pulse');
-            contextArea.value = `Searching web for '${univ} ${year} Grading Context'...`;
-
-            try {
-                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                const API_URL = isLocal ? 'https://searchscoringcriteria-qm5h7q6meq-uc.a.run.app' : '/searchScoringCriteria';
-
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ university: univ, year: year, problemType: type })
-                });
-
-                if (!response.ok) throw new Error("Search Failed");
-                const data = await response.json();
-
-                contextArea.value = data.text || "No criteria found.";
-
-            } catch (e) {
-                console.error(e);
-                alert("검색 실패: " + e.message);
-                contextArea.value = "검색에 실패했습니다. 직접 입력해주세요.";
-            } finally {
-                btn.innerText = "🔍 AI SEARCH";
-                btn.classList.remove('animate-pulse');
-            }
-        };
-
-        window.simulateContextSearch = async function (p) {
-            const contextArea = document.getElementById('detailContext');
-            contextArea.value = `Searching web for '${p.university} ${p.year} Grading Context'...`;
-            contextArea.classList.add('animate-pulse', 'text-blue-400');
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            contextArea.classList.remove('animate-pulse', 'text-blue-400');
-            contextArea.value = p.criteria || "기본 채점 기준";
-        };
-
-        // Placeholder for API function (Module will override this)
-        window.submitAnswerToAPI = async function () {
-            alert("AI 서버 연결 중입니다... 잠시만 기다려주세요. (Initializing...)");
-        };
-
-        window.startBatchAnalysis = function () {
-            if (!window.currentProblemId) { alert("문제를 선택해주세요."); return; }
-            if (!window.selectedFiles.length) { alert("답안을 업로드해주세요."); return; }
-            window.submitAnswerToAPI(window.currentProblemId, window.selectedFiles[0]);
-        };
-
-        window.showReport = function (resultData) {
-            const section = document.getElementById('reportSection');
-            section.classList.remove('hidden');
-
-            const reportBody = document.getElementById('reportBody');
-
-            console.log("showReport called with:", resultData); // DEBUG
-
-            // CHECK: 3-Step Pipeline Result (Premium HTML)
-            if (resultData && resultData.html_report) {
-                console.log("Rendering HTML Report");
-                reportBody.innerHTML = resultData.html_report;
-            } else {
-                console.warn("HTML Report missing, using fallback. Result Data:", resultData);
-
-                // Fallback Logic (Safe injection)
-                const score = resultData?.score || 0;
-
-                // Handle object-based feedback (fix [object Object])
-                let feedbackText = "결과 확인";
-                if (resultData?.feedback) {
-                    if (typeof resultData.feedback === 'string') feedbackText = resultData.feedback;
-                    else if (resultData.feedback.text) feedbackText = resultData.feedback.text;
-                    else feedbackText = JSON.stringify(resultData.feedback, null, 2);
+                // Update Asset Links
+                const probLink = document.getElementById('problemLink');
+                const solLink = document.getElementById('solutionLink');
+                if (probLink) {
+                    probLink.href = p.problem_url || "#";
+                    probLink.innerHTML = p.problem_url ? `<span class="text-blue-400 hover:text-blue-300">🔗 문제 보기 (PDF)</span>` : `<span class="text-gray-600">문제 파일 없음</span>`;
+                    probLink.target = "_blank";
+                }
+                if (solLink) {
+                    solLink.href = p.solution_url || "#";
+                    solLink.innerHTML = p.solution_url ? `<span class="text-blue-400 hover:text-blue-300">🔗 해설 보기 (PDF)</span>` : `<span class="text-gray-600">해설 파일 없음</span>`;
+                    solLink.target = "_blank";
                 }
 
-                reportBody.innerHTML = `
+                // Update Search Button State
+                const searchBtn = document.getElementById('aiSearchBtn');
+                if (searchBtn) {
+                    // p.university and p.year are already available here
+                    searchBtn.onclick = () => window.searchContext(p.university, p.year, p.subject);
+                    searchBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    searchBtn.disabled = false;
+                }
+
+                window.simulateContextSearch(p);
+            };
+
+            window.searchContext = async function (univ, year, type) {
+                const contextArea = document.getElementById('detailContext');
+                const btn = document.getElementById('aiSearchBtn');
+
+                if (!univ) { alert("대학교 정보가 없습니다."); return; }
+
+                // UI Feedback
+                btn.innerText = "SEARCHING...";
+                btn.classList.add('animate-pulse');
+                contextArea.value = `Searching web for '${univ} ${year} Grading Context'...`;
+
+                try {
+                    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                    const API_URL = isLocal ? 'https://searchscoringcriteria-qm5h7q6meq-uc.a.run.app' : '/searchScoringCriteria';
+
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ university: univ, year: year, problemType: type })
+                    });
+
+                    if (!response.ok) throw new Error("Search Failed");
+                    const data = await response.json();
+
+                    contextArea.value = data.text || "No criteria found.";
+
+                } catch (e) {
+                    console.error(e);
+                    alert("검색 실패: " + e.message);
+                    contextArea.value = "검색에 실패했습니다. 직접 입력해주세요.";
+                } finally {
+                    btn.innerText = "🔍 AI SEARCH";
+                    btn.classList.remove('animate-pulse');
+                }
+            };
+
+            window.simulateContextSearch = async function (p) {
+                const contextArea = document.getElementById('detailContext');
+                contextArea.value = `Searching web for '${p.university} ${p.year} Grading Context'...`;
+                contextArea.classList.add('animate-pulse', 'text-blue-400');
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                contextArea.classList.remove('animate-pulse', 'text-blue-400');
+                contextArea.value = p.criteria || "기본 채점 기준";
+            };
+
+            // Placeholder for API function (Module will override this)
+            window.submitAnswerToAPI = async function () {
+                alert("AI 서버 연결 중입니다... 잠시만 기다려주세요. (Initializing...)");
+            };
+
+            window.startBatchAnalysis = function () {
+                if (!window.currentProblemId) { alert("문제를 선택해주세요."); return; }
+                if (!window.selectedFiles.length) { alert("답안을 업로드해주세요."); return; }
+                window.submitAnswerToAPI(window.currentProblemId, window.selectedFiles[0]);
+            };
+
+            window.showReport = function (resultData) {
+                const section = document.getElementById('reportSection');
+                section.classList.remove('hidden');
+
+                const reportBody = document.getElementById('reportBody');
+
+                console.log("showReport called with:", resultData); // DEBUG
+
+                // CHECK: 3-Step Pipeline Result (Premium HTML)
+                if (resultData && resultData.html_report) {
+                    console.log("Rendering HTML Report");
+                    reportBody.innerHTML = resultData.html_report;
+                } else {
+                    console.warn("HTML Report missing, using fallback. Result Data:", resultData);
+
+                    // Fallback Logic (Safe injection)
+                    const score = resultData?.score || 0;
+
+                    // Handle object-based feedback (fix [object Object])
+                    let feedbackText = "결과 확인";
+                    if (resultData?.feedback) {
+                        if (typeof resultData.feedback === 'string') feedbackText = resultData.feedback;
+                        else if (resultData.feedback.text) feedbackText = resultData.feedback.text;
+                        else feedbackText = JSON.stringify(resultData.feedback, null, 2);
+                    }
+
+                    reportBody.innerHTML = `
                     <div class="p-8 text-center text-gray-400">
                         <h3 class="text-xl font-bold mb-2 text-white">분석 완료 (Analysis Complete)</h3>
                         <div class="text-4xl font-bold text-blue-400 my-4">${score} / 100</div>
                         <p class="whitespace-pre-wrap text-left bg-black/30 p-4 rounded-lg font-mono text-xs">${feedbackText}</p>
                         <p class="mt-4 text-red-400 text-xs">⚠️ Premium Report Generation Failed. Check Console for details.</p>
                     </div>`;
-            }
+                }
 
-            // Scroll to the Report Section with animation
-            setTimeout(() => {
-                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-        };
+                // Trigger MathJax Typeset for LaTeX formulas
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([reportBody]).then(() => {
+                        console.log("MathJax Render Complete");
+                    }).catch((err) => console.log('MathJax typeset failed: ' + err.message));
+                }
 
-        window.closeReport = function () {
-            document.getElementById('reportSection').classList.add('hidden');
-            // Scroll back to main action
-            document.getElementById('mainActionBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        };
+                // Scroll to the Report Section with animation
+                setTimeout(() => {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            };
 
-    </script>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+            window.closeReport = function () {
+                document.getElementById('reportSection').classList.add('hidden');
+                // Scroll back to main action
+                document.getElementById('mainActionBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            };
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyB0bOxRGkg2DDbz5dTX-Mv2DE1vLbvGC7k",
-            authDomain: "questio-2dd69.firebaseapp.com",
-            projectId: "questio-2dd69",
-            storageBucket: "questio-2dd69.firebasestorage.app",
-            messagingSenderId: "738461414990",
-            appId: "1:738461414990:web:baa3d65c8469be6c90351f",
-            measurementId: "G-TPRBFKQGG6"
-        };
+            window.downloadPDF = function () {
+                const element = document.getElementById('reportBody');
+                const studentName = "Student";
+                const opt = {
+                    margin: 0.5,
+                    filename: `Questio_Report_${new Date().toISOString().slice(0, 10)}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, logging: false, useCORS: true },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        console.log("Firebase Initialized (Clean Module)");
+                // Temporary style adjustment for PDF to ensure visibility
+                const originalBg = element.style.backgroundColor;
+                const originalColor = element.style.color;
+                element.style.backgroundColor = "#13111c";
+                element.style.color = "#e5e7eb";
 
-        window.submitAnswerToAPI = async function (problemId, file) {
-            document.getElementById('progressOverlay').classList.remove('hidden');
-            const setProgress = (n, id) => {
-                document.getElementById('progressBar').style.width = n + '%';
-                document.getElementById('progressPercent').innerText = n + '%';
-                if (id) {
+                html2pdf().set(opt).from(element).save().then(() => {
+                    element.style.backgroundColor = originalBg;
+                    element.style.color = originalColor;
+                });
+            };
+
+            window.downloadHTML = function () {
+                const element = document.getElementById('reportBody');
+                const htmlContent = [
+                    '<!DOCTYPE html>',
+                    '<html lang="ko">',
+                    '<head>',
+                    '    <meta charset="UTF-8">',
+                    '    <title>Questio Report</title>',
+                    '    <script src="https://cdn.tailwindcss.com"><\/script>',
+                    '    <script>',
+                    '    window.MathJax = { tex: { inlineMath: [["$", "$"], ["\\\\(", "\\\\)"]] }, svg: { fontCache: "global" } };',
+                    '    <\/script>',
+                    '    <script type="text/javascript" id="MathJax-script" async',
+                    '        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"><\/script>',
+                    '</head>',
+                    '<body class="bg-[#0a0a0c] text-gray-200 p-8">',
+                    '    <div class="max-w-4xl mx-auto">',
+                    element.innerHTML,
+                    '    </div>',
+                    '</body>',
+                    '</html>'
+                ].join("\n");
+
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `Questio_Report_${new Date().toISOString().slice(0, 10)}.html`;
+                link.click();
+            }; </script>
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+            import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyB0bOxRGkg2DDbz5dTX-Mv2DE1vLbvGC7k",
+                authDomain: "questio-2dd69.firebaseapp.com",
+                projectId: "questio-2dd69",
+                storageBucket: "questio-2dd69.firebasestorage.app",
+                messagingSenderId: "738461414990",
+                appId: "1:738461414990:web:baa3d65c8469be6c90351f",
+                measurementId: "G-TPRBFKQGG6"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            console.log("Firebase Initialized (Clean Module)");
+
+            window.submitAnswerToAPI = async function (problemId, file) {
+                document.getElementById('progressOverlay').classList.remove('hidden');
+                const setProgress = (n, id) => {
+                    document.getElementById('progressBar').style.width = n + '%';
+                    document.getElementById('progressPercent').innerText = n + '%';
+                    if (id) {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            el.className = 'flex items-center gap-4 text-blue-400 animate-pulse';
+                            el.children[0].className = 'w-4 h-4 rounded border border-blue-500 bg-blue-500 text-white flex items-center justify-center text-[10px]';
+                        }
+                    }
+                };
+                setProgress(5, null);
+                document.getElementById('resultArea').classList.add('hidden');
+
+                // Reset task indicators
+                ['taskFormula', 'taskLogic', 'taskFeedback'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
-                        el.className = 'flex items-center gap-4 text-blue-400 animate-pulse';
-                        el.children[0].className = 'w-4 h-4 rounded border border-blue-500 bg-blue-500 text-white flex items-center justify-center text-[10px]';
+                        el.className = 'flex items-center gap-4 text-gray-600';
+                        el.children[0].className = 'w-4 h-4 rounded border border-current flex items-center justify-center text-[10px]';
                     }
-                }
-            };
-            setProgress(5, null);
-            document.getElementById('resultArea').classList.add('hidden');
-
-            // Reset task indicators
-            ['taskFormula', 'taskLogic', 'taskFeedback'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.className = 'flex items-center gap-4 text-gray-600';
-                    el.children[0].className = 'w-4 h-4 rounded border border-current flex items-center justify-center text-[10px]';
-                }
-            });
-
-            try {
-                const toBase64 = file => new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = error => reject(error);
                 });
 
-                const imageBase64 = await toBase64(file);
-                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                const API_URL = isLocal ? 'https://submitanswer-qm5h7q6meq-uc.a.run.app' : '/submitAnswer';
+                try {
+                    const toBase64 = file => new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = error => reject(error);
+                    });
 
-                const studentName = document.getElementById('studentName').value || "Guest Student";
-                const criteriaText = document.getElementById('detailContext').value;
+                    const imageBase64 = await toBase64(file);
+                    // Force absolute URL for reliability
+                    const API_URL = 'https://us-central1-questio-2dd69.cloudfunctions.net/submitAnswer';
 
-                console.log("Submitting to API...", API_URL);
+                    const studentName = document.getElementById('studentName').value || "Guest Student";
+                    const criteriaText = document.getElementById('detailContext').value;
 
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: studentName, imageUrl: imageBase64, problemId: problemId, criteria: criteriaText })
-                });
+                    console.log("Submitting to API (v3.1 Absolute):", API_URL);
 
-                if (!response.ok) throw new Error('Network error');
-                const data = await response.json();
-                const ticketId = data.ticketId;
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: studentName, imageUrl: imageBase64, problemId: problemId, criteria: criteriaText })
+                    });
 
-                console.log("Ticket Created:", ticketId);
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData.details || errData.error || 'Server Error ' + response.status);
+                    }
+                    const data = await response.json();
+                    const ticketId = data.ticketId;
 
-                const unsub = onSnapshot(doc(db, "grading_tickets", ticketId), (docSnap) => {
-                    const d = docSnap.data();
-                    if (!d) return;
+                    console.log("Ticket Created:", ticketId);
 
-                    let completedCount = 0;
-                    ['formula', 'logic', 'feedback'].forEach((task) => {
-                        const taskId = 'task' + task.charAt(0).toUpperCase() + task.slice(1);
-                        if (d.tasks && d.tasks[task]) {
-                            const status = d.tasks[task].status;
-                            if (status === 'processing') {
-                                // setProgress update handled by general progress bar, but we can highlight current task
-                                const el = document.getElementById(taskId);
-                                if (el && el.className.includes('text-gray-600')) {
-                                    el.className = 'flex items-center gap-4 text-blue-400 animate-pulse';
-                                    el.children[0].className = 'w-4 h-4 rounded border border-blue-500 bg-blue-500 text-white flex items-center justify-center text-[10px]';
-                                }
-                            } else if (status === 'completed') {
-                                completedCount++;
-                                const el = document.getElementById(taskId);
-                                if (el) {
-                                    el.className = 'flex items-center gap-4 text-green-400';
-                                    el.children[0].className = 'w-4 h-4 rounded border border-green-500 bg-green-500 text-white flex items-center justify-center text-[10px]';
+                    const unsub = onSnapshot(doc(db, "grading_tickets", ticketId), (docSnap) => {
+                        const d = docSnap.data();
+                        if (!d) return;
+
+                        let completedCount = 0;
+                        ['formula', 'logic', 'feedback'].forEach((task) => {
+                            const taskId = 'task' + task.charAt(0).toUpperCase() + task.slice(1);
+                            if (d.tasks && d.tasks[task]) {
+                                const status = d.tasks[task].status;
+                                if (status === 'processing') {
+                                    // setProgress update handled by general progress bar, but we can highlight current task
+                                    const el = document.getElementById(taskId);
+                                    if (el && el.className.includes('text-gray-600')) {
+                                        el.className = 'flex items-center gap-4 text-blue-400 animate-pulse';
+                                        el.children[0].className = 'w-4 h-4 rounded border border-blue-500 bg-blue-500 text-white flex items-center justify-center text-[10px]';
+                                    }
+                                } else if (status === 'completed') {
+                                    completedCount++;
+                                    const el = document.getElementById(taskId);
+                                    if (el) {
+                                        el.className = 'flex items-center gap-4 text-green-400';
+                                        el.children[0].className = 'w-4 h-4 rounded border border-green-500 bg-green-500 text-white flex items-center justify-center text-[10px]';
+                                    }
                                 }
                             }
+                        });
+
+                        const pct = 10 + (completedCount * 30);
+                        document.getElementById('progressBar').style.width = pct + '%';
+                        document.getElementById('progressPercent').innerText = pct + '%';
+
+                        if (d.status === 'completed') {
+                            document.getElementById('progressOverlay').classList.add('hidden');
+                            if (window.showReport) window.showReport(d.result);
+                            unsub();
                         }
                     });
 
-                    const pct = 10 + (completedCount * 30);
-                    document.getElementById('progressBar').style.width = pct + '%';
-                    document.getElementById('progressPercent').innerText = pct + '%';
+                } catch (error) {
+                    console.error("Analysis Error:", error);
+                    alert("분석 요청 중 오류가 발생했습니다: " + error.message);
+                    document.getElementById('progressOverlay').classList.add('hidden');
+                }
+            };
 
-                    if (d.status === 'completed') {
-                        document.getElementById('progressOverlay').classList.add('hidden');
-                        if (window.showReport) window.showReport(d.result);
-                        unsub();
-                    }
-                });
-
-            } catch (error) {
-                console.error("Analysis Error:", error);
-                alert("분석 요청 중 오류가 발생했습니다: " + error.message);
-                document.getElementById('progressOverlay').classList.add('hidden');
-            }
-        };
-
-        console.log("Module Loaded: submitAnswerToAPI attached.");
-    </script>
+            console.log("Module Loaded: submitAnswerToAPI attached.");
+        </script>
 </body>
 
 </html>

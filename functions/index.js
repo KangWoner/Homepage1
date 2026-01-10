@@ -9,7 +9,7 @@ admin.initializeApp();
 
 // Initialize Vertex AI
 const vertex_ai = new VertexAI({ project: 'questio-2dd69', location: 'us-central1' });
-const model = 'gemini-1.5-flash';
+const model = 'gemini-1.5-pro'; // Upgrade to Pro for deeper reasoning (Song Minsu Persona)
 
 // Load Problems from CSV (Cold Start)
 const problemsMap = new Map();
@@ -136,13 +136,8 @@ exports.submitAnswer = onRequest({ cors: true }, async (req, res) => {
         const project = 'questio-2dd69';
         const location = 'us-central1';
         const queue = 'grading-queue';
-        const tasksClient = new Data(project, location); // Placeholder if needed, but we use functions.task.dispatch
-        // Actually we use the onTaskDispatched mechanism. 
-        // We need to enqueue tasks using Google Cloud Tasks Client or similar.
-        // Simplified for this architecture: Trigger via simple HTTP or PubSub? 
-        // Wait, the original design used a Queue-based approach or direct triggers.
-        // Let's use the standard "enqueue" helper if available, or just call the worker directly?
-        // NO, we defined `onTaskDispatched`. We must enqueue tasks to the specific queue.
+        // Local fallback or simplified logging if Tasks client fails logic
+        // But we proceed to use CloudTasksClient below.
 
         const { CloudTasksClient } = require('@google-cloud/tasks');
         const tasksClientV2 = new CloudTasksClient();
@@ -174,8 +169,12 @@ exports.submitAnswer = onRequest({ cors: true }, async (req, res) => {
         res.status(200).json({ ticketId: ticketId, message: "Use ticketId to listen for results." });
 
     } catch (error) {
-        console.error("API Error:", error);
-        res.status(500).json({ error: error.message });
+        console.error("[API Error] submitAnswer failed:", error);
+        res.status(500).json({
+            error: "Backend Execution Failed",
+            details: error.message,
+            stack: error.stack
+        });
     }
 });
 
@@ -278,26 +277,41 @@ exports.processGradingTask = onTaskDispatched({
 
             case 'feedback':
                 aiResult = await callGemini(
-                    "You are a warm, encouraging AI tutor 'Dr. Han'. Use Korean.",
+                    "You are 'Song Minsu', a strict, professional top-tier Math Essay Instructor in South Korea. Your tone is critical, cold, but extremely insightful.",
                     `
+                    [Matching Check]: Is the student's solution for the given [Question]?
                     [Question]: ${problem.question}
                     [Criteria]: ${problem.criteria_logic}
+
+                    Analyze the student's solution strictly based on the Model Answer.
                     
-                    Analyze the student's detailed performance.
-                    1. **Context Check**: Is this the correct problem?
-                    2. Identify **Strengths** (What they did well).
-                    3. Identify **Weaknesses** (What they missed).
-                    4. Suggest **Study Points** (What logic/concept to review).
-                    5. Provide **Overall Evaluation** summarizing the score.
+                    **Evaluation Strategy**:
+                    1. **Core Competencies Scoring (0-100)**:
+                       - **Problem Solving (문제해결력)**: Did they interpret the problem correctly and find the right path?
+                       - **Writing Ability (논리적 서술)**: Is the derivation clear, logical, and without gaps?
+                       - **Calculation (수리 연산)**: Are all intermediate and final calculations correct?
                     
-                    Output JSON: { 
+                    2. **Feedback Sections**:
+                       - **Strengths**: Acknowledge ONLY true positives.
+                       - **Weaknesses**: Point out every logical gap, notation error, or inefficiency.
+                       - **Study Points**: Specific mathematical concepts to review.
+                       - **Growth Analysis**: Compare this attempt to an ideal 'Previous Attempt' (simulated). Highlight if this shows improvement or recurring bad habits.
+                       - **Overall Evaluation**: A strict summary of their level (Top Tier, Mid, Low).
+
+                    Output strictly matching JSON Schema:
+                    { 
                         "is_correct_problem": boolean,
-                        "strengths": "Detailed text in Korean", 
-                        "weaknesses": "Detailed text in Korean", 
-                        "study_points": "Detailed text in Korean",
-                        "overall_eval": "Detailed text in Korean",
-                        "text": "General encouraging feedback", 
-                        "tone": "encouraging" 
+                        "coreCompetencies": {
+                             "problemSolving": number,
+                             "writingAbility": number,
+                             "calculationAccuracy": number
+                        },
+                        "strengths": ["string", "string"], 
+                        "weaknesses": ["string", "string"], 
+                        "study_points": ["string", "string"],
+                        "growth_analysis": "Detailed markdown text comparing to potential past mistakes.",
+                        "overall_eval": "Detailed strict markdown text.",
+                        "text": "A brief 2-sentence summary for the notifications."
                     }
                     `,
                     imagePart,
@@ -375,11 +389,18 @@ exports.processGradingTask = onTaskDispatched({
                 - Dark Mode theme (bg-zinc-900 text-gray-200).
                 - Use <div class="p-6 bg-[#13111c] rounded-2xl border border-white/5"> for cards.
                 - Display Total Score prominently with a gradient text.
-                - **CRITICAL**: Create separate sections for:
-                  1. **Strengths** (Use green accents) from data.feedback.strengths
-                  2. **Weaknesses** (Use red accents) from data.feedback.weaknesses
-                  3. **Study Points** (Use blue accents) from data.feedback.study_points
-                  4. **Overall Evaluation** (Use purple accents) from data.feedback.overall_eval
+                
+                - **CRITICAL: Competency Visualization**:
+                  - Display 'Core Competencies' (Problem Solving, Writing, Calculation) using Progress Bars.
+                  - Use data.feedback.coreCompetencies.score for width (e.g. w-[80%]).
+                
+                - **CRITICAL: New Sections**:
+                  1. **Growth Analysis** (Use cyan accents): data.feedback.growth_analysis (Render Markdown)
+                  2. **Strengths** (Use green accents): data.feedback.strengths
+                  3. **Weaknesses** (Use red accents): data.feedback.weaknesses
+                  4. **Study Points** (Use blue accents): data.feedback.study_points
+                  5. **Overall Evaluation** (Use purple accents): data.feedback.overall_eval
+                  
                 - If score is 0 and is_wrong_problem is true, display a LARGE WARNING: "Different Problem Detected".
                 - Format LaTeX Math with $...$ (e.g. $\\int x dx$).
                 - DO NOT include fully proper HTML structure (<html>, <body>), only the inner container HTML to be injected into a detailed view.
