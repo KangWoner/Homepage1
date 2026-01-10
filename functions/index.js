@@ -179,6 +179,279 @@ exports.submitAnswer = onRequest({ cors: true }, async (req, res) => {
     }
 });
 
+// ============================================================================
+// Helper Functions for processGradingTask
+// ============================================================================
+
+/**
+ * Parses image data from a data URL
+ * @param {string} imageUrl - Data URL containing base64 encoded image
+ * @returns {object|null} Image part object with mimeType and data, or null if invalid
+ */
+function parseImageData(imageUrl) {
+    if (!imageUrl || !imageUrl.startsWith('data:')) {
+        return null;
+    }
+
+    const matches = imageUrl.match(/^data:(.+);base64,(.+)$/);
+    if (!matches) {
+        return null;
+    }
+
+    return { mimeType: matches[1], data: matches[2] };
+}
+
+/**
+ * Prepares problem context with custom criteria if provided
+ * @param {string} problemId - ID of the problem
+ * @param {string} criteria - Custom criteria (optional)
+ * @returns {object} Problem object with question, criteria, and model answer
+ */
+function prepareProblemContext(problemId, criteria) {
+    let problem = problemsMap.get(problemId) || {
+        question: "Unknown Question",
+        criteria_formula: "General Math Rules",
+        criteria_logic: "Logical consistency",
+        model_answer: "N/A"
+    };
+
+    if (criteria && criteria.trim() !== "") {
+        problem = {
+            ...problem,
+            criteria_formula: `[Custom Context Provided]:\n${criteria}`,
+            criteria_logic: `[Custom Context Provided]:\n${criteria}`
+        };
+    }
+
+    return problem;
+}
+
+/**
+ * Processes formula grading task using AI
+ * @param {object} problem - Problem context object
+ * @param {object} imagePart - Parsed image data
+ * @returns {Promise<object>} AI result with formula analysis
+ */
+async function processFormulaTask(problem, imagePart) {
+    const jsonConfig = { responseMimeType: 'application/json' };
+
+    return await callGemini(
+        "You are a strict math grader. Verify if the solution matches the given [Question] first.",
+        `
+        [Question]: ${problem.question}
+        [Model Answer]: ${problem.model_answer}
+        [Grading Criteria]: ${problem.criteria_formula}
+
+        Analyze the student's solution provided in the image.
+        1. **CRITICAL STEP**: Does the student's solution address the [Question] above?
+           - If NO (different problem): Set "valid": false, "score_deduction": 100, "errors": ["Wrong problem solved", "Irrelevant solution"].
+           - If YES: Continue grading.
+
+        2. Extract formulas used.
+        3. Check specific steps against Model Answer.
+
+        Output JSON: {
+            "valid": boolean,
+            "is_correct_problem": boolean,
+            "latex": "extracted latex",
+            "errors": ["error 1", ...],
+            "score_deduction": number
+        }
+        `,
+        imagePart,
+        jsonConfig
+    );
+}
+
+/**
+ * Processes logic grading task using AI
+ * @param {object} problem - Problem context object
+ * @param {object} imagePart - Parsed image data
+ * @returns {Promise<object>} AI result with logic analysis
+ */
+async function processLogicTask(problem, imagePart) {
+    const jsonConfig = { responseMimeType: 'application/json' };
+
+    return await callGemini(
+        "You are a logic analyst. Check for logical jumps or insufficient grounding.",
+        `
+        [Question]: ${problem.question}
+        [Grading Criteria]: ${problem.criteria_logic}
+
+        Analyze the flow of the argument.
+        - Are step transitions valid?
+
+        Output JSON: { "structure": "Valid"|"Invalid", "gaps": ["gap description"], "score_deduction": number }
+        `,
+        imagePart,
+        jsonConfig
+    );
+}
+
+/**
+ * Processes feedback generation task using AI
+ * @param {object} problem - Problem context object
+ * @param {object} imagePart - Parsed image data
+ * @returns {Promise<object>} AI result with feedback
+ */
+async function processFeedbackTask(problem, imagePart) {
+    const jsonConfig = { responseMimeType: 'application/json' };
+
+    return await callGemini(
+        "You are a warm, encouraging AI tutor 'Dr. Han'. Use Korean.",
+        `
+        [Question]: ${problem.question}
+        [Criteria]: ${problem.criteria_logic}
+
+        Analyze the student's detailed performance.
+        1. **Context Check**: Is this the correct problem?
+        2. Identify **Strengths** (What they did well).
+        3. Identify **Weaknesses** (What they missed).
+        4. Suggest **Study Points** (What logic/concept to review).
+        5. Provide **Overall Evaluation** summarizing the score.
+
+        Output JSON: {
+            "is_correct_problem": boolean,
+            "strengths": "Detailed text in Korean",
+            "weaknesses": "Detailed text in Korean",
+            "study_points": "Detailed text in Korean",
+            "overall_eval": "Detailed text in Korean",
+            "text": "General encouraging feedback",
+            "tone": "encouraging"
+        }
+        `,
+        imagePart,
+        jsonConfig
+    );
+}
+
+/**
+ * Calculates final score based on task results
+ * @param {object} tasks - All task results
+ * @returns {object} Object containing finalScore and any error information
+ */
+function calculateFinalScore(tasks) {
+    // Check for Wrong Problem Penalty (Override score if wrong problem)
+    const isWrongProblem = (
+        tasks.formula.data.is_correct_problem === false ||
+        tasks.feedback.data.is_correct_problem === false
+    );
+
+    // Check for AI API Errors (Prevent 100/100 on failure)
+    const hasError = (
+        tasks.formula.data.error ||
+        tasks.logic.data.error ||
+        tasks.feedback.data.error
+    );
+
+    let logicDeduction = tasks.logic.data.score_deduction || 0;
+    let formulaDeduction = tasks.formula.data.score_deduction ||
+        (tasks.formula.data.errors ? tasks.formula.data.errors.length * 5 : 0);
+
+    let finalScore = Math.max(0, 100 - logicDeduction - formulaDeduction);
+
+    if (isWrongProblem) {
+        finalScore = 0;
+        console.log("Penalty: Student solved wrong problem. Score reset to 0.");
+    }
+
+    if (hasError) {
+        finalScore = 0;
+        console.error("Aggregation Canceled: One or more tasks failed with error.");
+        // Inject Error Feedback
+        tasks.feedback.data = {
+            text: "시스템 오류: AI 분석에 실패했습니다. (AI Analysis Failed)",
+            strengths: "N/A",
+            weaknesses: "AI API Error (Vertex AI 403/500)",
+            study_points: "Check Google Cloud Console API Status.",
+            overall_eval: "AI 서비스가 비활성화되어 있거나 오류가 발생했습니다.",
+            is_correct_problem: false
+        };
+    }
+
+    return { finalScore, hasError, isWrongProblem };
+}
+
+/**
+ * Generates HTML report from grading results using AI
+ * @param {object} fullResultData - Complete result data including score and all task results
+ * @returns {Promise<string>} Generated HTML report
+ */
+async function generateHtmlReport(fullResultData) {
+    const htmlReport = await callGemini(
+        "You are a Frontend Developer specializing in Tailwind CSS reports.",
+        `
+        Convert this Grading Result into a Premium HTML Report.
+
+        [Data]:
+        ${JSON.stringify(fullResultData)}
+
+        [Design Requirements]:
+        - Use Tailwind CSS.
+        - Dark Mode theme (bg-zinc-900 text-gray-200).
+        - Use <div class="p-6 bg-[#13111c] rounded-2xl border border-white/5"> for cards.
+        - Display Total Score prominently with a gradient text.
+        - **CRITICAL**: Create separate sections for:
+          1. **Strengths** (Use green accents) from data.feedback.strengths
+          2. **Weaknesses** (Use red accents) from data.feedback.weaknesses
+          3. **Study Points** (Use blue accents) from data.feedback.study_points
+          4. **Overall Evaluation** (Use purple accents) from data.feedback.overall_eval
+        - If score is 0 and is_wrong_problem is true, display a LARGE WARNING: "Different Problem Detected".
+        - Format LaTeX Math with $...$ (e.g. $\\int x dx$).
+        - DO NOT include fully proper HTML structure (<html>, <body>), only the inner container HTML to be injected into a detailed view.
+
+        Output ONLY valid HTML code.
+        `,
+        null,
+        { responseMimeType: 'text/plain' }
+    );
+
+    return htmlReport.text;
+}
+
+/**
+ * Checks if all tasks are complete and aggregates results
+ * @param {object} ticketRef - Firestore document reference
+ * @param {string} ticketId - Ticket ID for logging
+ * @returns {Promise<void>}
+ */
+async function checkAndAggregateResults(ticketRef, ticketId) {
+    const docSnap = await ticketRef.get();
+    const tasks = docSnap.data().tasks;
+
+    if (tasks.formula.status === 'completed' &&
+        tasks.logic.status === 'completed' &&
+        tasks.feedback.status === 'completed') {
+
+        console.log(`[Aggregation] All tasks complete for ${ticketId}. Generating HTML Report...`);
+
+        // Calculate Score
+        const scoreResult = calculateFinalScore(tasks);
+
+        // Generate Full Result Data
+        const fullResultData = {
+            score: scoreResult.finalScore,
+            formula: tasks.formula.data,
+            logic: tasks.logic.data,
+            feedback: tasks.feedback.data
+        };
+
+        // Generate HTML Report
+        const htmlReportText = await generateHtmlReport(fullResultData);
+
+        // Update Firestore with final results
+        await ticketRef.update({
+            status: 'completed',
+            'result.score': scoreResult.finalScore,
+            'result.summary': tasks.feedback.data.text,
+            'result.html_report': htmlReportText
+        });
+
+        console.log(`[Finalized] Ticket ${ticketId} Score: ${scoreResult.finalScore}`);
+    }
+}
+
+// ============================================================================
 // 2. Cloud Task Worker: Execute Specific Logic via Vertex AI
 exports.processGradingTask = onTaskDispatched({
     retryConfig: {
@@ -197,207 +470,40 @@ exports.processGradingTask = onTaskDispatched({
     console.log(`[Start] Task: ${taskType}, Ticket: ${ticketId}`);
 
     try {
+        // Mark task as processing
         await ticketRef.update({
             [`tasks.${taskType}.status`]: 'processing'
         });
 
-        // 1. Prepare Problem Context
-        let problem = problemsMap.get(problemId) || {
-            question: "Unknown Question",
-            criteria_formula: "General Math Rules",
-            criteria_logic: "Logical consistency",
-            model_answer: "N/A"
-        };
+        // Prepare problem context with custom criteria if provided
+        const problem = prepareProblemContext(problemId, criteria);
 
-        if (criteria && criteria.trim() !== "") {
-            problem = {
-                ...problem,
-                criteria_formula: `[Custom Context Provided]:\n${criteria}`,
-                criteria_logic: `[Custom Context Provided]:\n${criteria}`
-            };
-        }
+        // Parse image data from URL
+        const imagePart = parseImageData(imageUrl);
 
-        // 2. Parse Image
-        let imagePart = null;
-        if (imageUrl && imageUrl.startsWith('data:')) {
-            const matches = imageUrl.match(/^data:(.+);base64,(.+)$/);
-            if (matches) {
-                imagePart = { mimeType: matches[1], data: matches[2] };
-            }
-        }
-
+        // Execute the appropriate task based on type
         let aiResult = {};
-        const jsonConfig = { responseMimeType: 'application/json' };
-
         switch (taskType) {
             case 'formula':
-                aiResult = await callGemini(
-                    "You are a strict math grader. Verify if the solution matches the given [Question] first.",
-                    `
-                    [Question]: ${problem.question}
-                    [Model Answer]: ${problem.model_answer}
-                    [Grading Criteria]: ${problem.criteria_formula}
-                    
-                    Analyze the student's solution provided in the image.
-                    1. **CRITICAL STEP**: Does the student's solution address the [Question] above?
-                       - If NO (different problem): Set "valid": false, "score_deduction": 100, "errors": ["Wrong problem solved", "Irrelevant solution"].
-                       - If YES: Continue grading.
-                    
-                    2. Extract formulas used.
-                    3. Check specific steps against Model Answer.
-                    
-                    Output JSON: { 
-                        "valid": boolean, 
-                        "is_correct_problem": boolean,
-                        "latex": "extracted latex", 
-                        "errors": ["error 1", ...], 
-                        "score_deduction": number 
-                    }
-                    `,
-                    imagePart,
-                    jsonConfig
-                );
+                aiResult = await processFormulaTask(problem, imagePart);
                 break;
-
             case 'logic':
-                aiResult = await callGemini(
-                    "You are a logic analyst. Check for logical jumps or insufficient grounding.",
-                    `
-                    [Question]: ${problem.question}
-                    [Grading Criteria]: ${problem.criteria_logic}
-                    
-                    Analyze the flow of the argument.
-                    - Are step transitions valid?
-                    
-                    Output JSON: { "structure": "Valid"|"Invalid", "gaps": ["gap description"], "score_deduction": number }
-                    `,
-                    imagePart,
-                    jsonConfig
-                );
+                aiResult = await processLogicTask(problem, imagePart);
                 break;
-
             case 'feedback':
-                aiResult = await callGemini(
-                    "You are a warm, encouraging AI tutor 'Dr. Han'. Use Korean.",
-                    `
-                    [Question]: ${problem.question}
-                    [Criteria]: ${problem.criteria_logic}
-                    
-                    Analyze the student's detailed performance.
-                    1. **Context Check**: Is this the correct problem?
-                    2. Identify **Strengths** (What they did well).
-                    3. Identify **Weaknesses** (What they missed).
-                    4. Suggest **Study Points** (What logic/concept to review).
-                    5. Provide **Overall Evaluation** summarizing the score.
-                    
-                    Output JSON: { 
-                        "is_correct_problem": boolean,
-                        "strengths": "Detailed text in Korean", 
-                        "weaknesses": "Detailed text in Korean", 
-                        "study_points": "Detailed text in Korean",
-                        "overall_eval": "Detailed text in Korean",
-                        "text": "General encouraging feedback", 
-                        "tone": "encouraging" 
-                    }
-                    `,
-                    imagePart,
-                    jsonConfig
-                );
+                aiResult = await processFeedbackTask(problem, imagePart);
                 break;
         }
 
-        // Update results
+        // Update task results in Firestore
         await ticketRef.update({
             [`result.${taskType}`]: aiResult,
             [`tasks.${taskType}.status`]: 'completed',
             [`tasks.${taskType}.data`]: aiResult
         });
 
-        // Check Completion & Generate Final HTML Report (Step 3)
-        const docSnap = await ticketRef.get();
-        const tasks = docSnap.data().tasks;
-
-        if (tasks.formula.status === 'completed' &&
-            tasks.logic.status === 'completed' &&
-            tasks.feedback.status === 'completed') {
-
-            console.log(`[Aggregation] All tasks complete for ${ticketId}. Generating HTML Report...`);
-
-            // Calculate Score
-            // Check for Wrong Problem Penalty (Override score if wrong problem)
-            const isWrongProblem = (tasks.formula.data.is_correct_problem === false || tasks.feedback.data.is_correct_problem === false);
-
-            // Checks for AI API Errors (Prevent 100/100 on failure)
-            const hasError = (tasks.formula.data.error || tasks.logic.data.error || tasks.feedback.data.error);
-
-            let logicDeduction = tasks.logic.data.score_deduction || 0;
-            let formulaDeduction = tasks.formula.data.score_deduction || (tasks.formula.data.errors ? tasks.formula.data.errors.length * 5 : 0);
-
-            let finalScore = Math.max(0, 100 - logicDeduction - formulaDeduction);
-
-            if (isWrongProblem) {
-                finalScore = 0;
-                console.log("Penalty: Student solved wrong problem. Score reset to 0.");
-            }
-
-            if (hasError) {
-                finalScore = 0;
-                console.error("Aggregation Canceled: One or more tasks failed with error.");
-                // Inject Error Feedback
-                tasks.feedback.data = {
-                    text: "시스템 오류: AI 분석에 실패했습니다. (AI Analysis Failed)",
-                    strengths: "N/A",
-                    weaknesses: "AI API Error (Vertex AI 403/500)",
-                    study_points: "Check Google Cloud Console API Status.",
-                    overall_eval: "AI 서비스가 비활성화되어 있거나 오류가 발생했습니다.",
-                    is_correct_problem: false
-                };
-            }
-
-            // Step 3: Generate Premium HTML Report
-            const fullResultData = {
-                score: finalScore,
-                formula: tasks.formula.data,
-                logic: tasks.logic.data,
-                feedback: tasks.feedback.data
-            };
-
-            const htmlReport = await callGemini(
-                "You are a Frontend Developer specializing in Tailwind CSS reports.",
-                `
-                Convert this Grading Result into a Premium HTML Report.
-                
-                [Data]:
-                ${JSON.stringify(fullResultData)}
-                
-                [Design Requirements]:
-                - Use Tailwind CSS.
-                - Dark Mode theme (bg-zinc-900 text-gray-200).
-                - Use <div class="p-6 bg-[#13111c] rounded-2xl border border-white/5"> for cards.
-                - Display Total Score prominently with a gradient text.
-                - **CRITICAL**: Create separate sections for:
-                  1. **Strengths** (Use green accents) from data.feedback.strengths
-                  2. **Weaknesses** (Use red accents) from data.feedback.weaknesses
-                  3. **Study Points** (Use blue accents) from data.feedback.study_points
-                  4. **Overall Evaluation** (Use purple accents) from data.feedback.overall_eval
-                - If score is 0 and is_wrong_problem is true, display a LARGE WARNING: "Different Problem Detected".
-                - Format LaTeX Math with $...$ (e.g. $\\int x dx$).
-                - DO NOT include fully proper HTML structure (<html>, <body>), only the inner container HTML to be injected into a detailed view.
-                
-                Output ONLY valid HTML code.
-                `,
-                null,
-                { responseMimeType: 'text/plain' }
-            );
-
-            await ticketRef.update({
-                status: 'completed',
-                'result.score': finalScore,
-                'result.summary': tasks.feedback.data.text,
-                'result.html_report': htmlReport.text // Store the HTML
-            });
-            console.log(`[Finalized] Ticket ${ticketId} Score: ${finalScore}`);
-        }
+        // Check if all tasks are complete and aggregate results
+        await checkAndAggregateResults(ticketRef, ticketId);
 
     } catch (error) {
         console.error(`Error in ${taskType}:`, error);
