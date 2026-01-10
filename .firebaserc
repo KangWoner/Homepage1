@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "coffee-spark-ai-barista-a4eff",
+    "**prod**": "questio-2dd69"
+  },
+  "targets": {},
+  "etags": {}
+}
