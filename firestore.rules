@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Students collection
+    match /students/{studentId} {
+      allow read: if true;
+      allow write: if true;  // 테스트용 - 운영 환경에서는 인증 추가 필요
+
+      // Student submissions subcollection
+      match /submissions/{submissionId} {
+        allow read: if true;
+        allow write: if true;
+      }
+    }
+
+    // Grading tickets
+    match /grading_tickets/{ticketId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}
