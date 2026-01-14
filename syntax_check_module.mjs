@@ -53,12 +53,20 @@ window.submitAnswerToAPI = async function (problemId, file) {
         const API_URL = isLocal ? 'https://submitanswer-qm5h7q6meq-uc.a.run.app' : '/submitAnswer';
 
         const studentName = document.getElementById('studentName').value || "Guest Student";
+        const studentEmail = document.getElementById('studentEmail').value || null;
         const criteriaText = document.getElementById('detailContext').value;
 
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: studentName, imageUrl: imageBase64, problemId: problemId, criteria: criteriaText })
+            body: JSON.stringify({
+                userId: studentName,
+                studentName: studentName,
+                studentEmail: studentEmail,
+                imageUrl: imageBase64,
+                problemId: problemId,
+                criteria: criteriaText
+            })
         });
 
         if (!response.ok) throw new Error('Network error');

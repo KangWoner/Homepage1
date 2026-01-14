@@ -45,6 +45,72 @@ try {
     console.error("Failed to load problems.csv:", e);
 }
 
+// Helper: Get Student History
+async function getStudentHistory(db, studentId, limit = 5) {
+    try {
+        const studentRef = db.collection('students').doc(studentId);
+        const studentDoc = await studentRef.get();
+
+        if (!studentDoc.exists) {
+            return [];
+        }
+
+        const submissionsSnapshot = await studentRef
+            .collection('submissions')
+            .orderBy('createdAt', 'desc')
+            .limit(limit)
+            .get();
+
+        return submissionsSnapshot.docs.map(doc => doc.data());
+    } catch (e) {
+        console.error("Error fetching student history:", e);
+        return [];
+    }
+}
+
+// Helper: Calculate Growth Metrics
+function calculateGrowthMetrics(currentResult, history) {
+    if (!history || history.length === 0) {
+        return {
+            isFirstSubmission: true,
+            trend: 'new',
+            scoreImprovement: 0,
+            averagePreviousScore: 0,
+            competencyGrowth: null
+        };
+    }
+
+    const scores = history.map(h => h.score || 0);
+    const avgPrevious = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const scoreImprovement = currentResult.score - avgPrevious;
+
+    // Calculate trend
+    let trend = 'stable';
+    if (scoreImprovement > 10) trend = 'improving';
+    else if (scoreImprovement < -10) trend = 'declining';
+
+    // Calculate competency growth
+    let competencyGrowth = null;
+    if (history[0]?.coreCompetencies && currentResult.coreCompetencies) {
+        const prev = history[0].coreCompetencies;
+        const curr = currentResult.coreCompetencies;
+        competencyGrowth = {
+            problemSolving: curr.problemSolving - prev.problemSolving,
+            writingAbility: curr.writingAbility - prev.writingAbility,
+            calculationAccuracy: curr.calculationAccuracy - prev.calculationAccuracy
+        };
+    }
+
+    return {
+        isFirstSubmission: false,
+        trend,
+        scoreImprovement: Math.round(scoreImprovement * 10) / 10,
+        averagePreviousScore: Math.round(avgPrevious * 10) / 10,
+        competencyGrowth,
+        submissionCount: history.length + 1
+    };
+}
+
 // Helper: Call Gemini
 async function callGemini(systemInstruction, userPrompt, imagePart, config = {}) {
     try {
@@ -105,13 +171,31 @@ exports.submitAnswer = onRequest({ cors: true }, async (req, res) => {
     }
 
     try {
-        const { problemId, studentName, imageUrl, criteria } = req.body;
+        const { problemId, studentName, studentEmail, imageUrl, criteria } = req.body;
 
         if (!imageUrl) {
             return res.status(400).json({ error: "Image URL is required" });
         }
 
         const db = admin.firestore();
+
+        // Use email as studentId, fallback to name or generate ID
+        const studentId = studentEmail || studentName || `guest_${Date.now()}`;
+
+        // Update or create student record
+        const studentRef = db.collection('students').doc(studentId);
+        const studentDoc = await studentRef.get();
+
+        if (!studentDoc.exists) {
+            await studentRef.set({
+                studentId: studentId,
+                name: studentName || "Guest Student",
+                email: studentEmail || null,
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                totalSubmissions: 0
+            });
+        }
+
         const ticketRef = db.collection('grading_tickets').doc();
         const ticketId = ticketRef.id;
 
@@ -119,7 +203,9 @@ exports.submitAnswer = onRequest({ cors: true }, async (req, res) => {
         await ticketRef.set({
             ticketId: ticketId,
             problemId: problemId,
+            studentId: studentId,
             studentName: studentName || "Anonymous",
+            studentEmail: studentEmail || null,
             status: "processing",
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             tasks: {
@@ -148,7 +234,7 @@ exports.submitAnswer = onRequest({ cors: true }, async (req, res) => {
                     url: `https://${location}-${project}.cloudfunctions.net/processGradingTask`, // URL of the worker
                     headers: { 'Content-Type': 'application/json' },
                     body: Buffer.from(JSON.stringify({
-                        ticketId, taskType: type, imageUrl, problemId, criteria
+                        ticketId, taskType: type, imageUrl, problemId, criteria, studentId
                     })).toString('base64'),
                     oidcToken: {
                         serviceAccountEmail: `questio-2dd69@appspot.gserviceaccount.com`,
@@ -187,7 +273,7 @@ exports.processGradingTask = onTaskDispatched({
     },
 }, async (req) => {
     const data = req.data;
-    const { ticketId, taskType, imageUrl, problemId, criteria } = data;
+    const { ticketId, taskType, imageUrl, problemId, criteria, studentId } = data;
     const db = admin.firestore();
     const ticketRef = db.collection('grading_tickets').doc(ticketId);
 
@@ -272,40 +358,66 @@ exports.processGradingTask = onTaskDispatched({
                 break;
 
             case 'feedback':
+                // Fetch student history for real growth analysis
+                const studentHistory = await getStudentHistory(db, studentId, 5);
+
+                let historyContext = '';
+                if (studentHistory.length > 0) {
+                    const historyData = studentHistory.map((h, idx) => ({
+                        submission: idx + 1,
+                        date: h.createdAt?.toDate?.()?.toISOString?.() || 'N/A',
+                        problemId: h.problemId,
+                        score: h.score,
+                        coreCompetencies: h.coreCompetencies
+                    }));
+
+                    historyContext = `
+[STUDENT HISTORY - ${studentHistory.length} Previous Submissions]:
+${JSON.stringify(historyData, null, 2)}
+
+**IMPORTANT**: Use this ACTUAL history to analyze growth. Compare scores, competency trends, and recurring mistakes.
+                    `;
+                } else {
+                    historyContext = '\n[STUDENT HISTORY]: This is the student\'s FIRST submission. No comparison available.\n';
+                }
+
                 aiResult = await callGemini(
                     "You are 'Song Minsu', a strict, professional top-tier Math Essay Instructor in South Korea. Your tone is critical, cold, but extremely insightful.",
                     `
                     [Matching Check]: Is the student's solution for the given [Question]?
                     [Question]: ${problem.question}
                     [Criteria]: ${problem.criteria_logic}
+                    ${historyContext}
 
                     Analyze the student's solution strictly based on the Model Answer.
-                    
+
                     **Evaluation Strategy**:
                     1. **Core Competencies Scoring (0-100)**:
                        - **Problem Solving (문제해결력)**: Did they interpret the problem correctly and find the right path?
                        - **Writing Ability (논리적 서술)**: Is the derivation clear, logical, and without gaps?
                        - **Calculation (수리 연산)**: Are all intermediate and final calculations correct?
-                    
+
                     2. **Feedback Sections**:
                        - **Strengths**: Acknowledge ONLY true positives.
                        - **Weaknesses**: Point out every logical gap, notation error, or inefficiency.
                        - **Study Points**: Specific mathematical concepts to review.
-                       - **Growth Analysis**: Compare this attempt to an ideal 'Previous Attempt' (simulated). Highlight if this shows improvement or recurring bad habits.
+                       - **Growth Analysis**: ${studentHistory.length > 0 ?
+                           'Compare this attempt to the student\'s ACTUAL previous submissions above. Highlight score trends, competency improvements/declines, and recurring patterns.' :
+                           'This is the first submission - provide baseline evaluation and areas for future focus.'}
                        - **Overall Evaluation**: A strict summary of their level (Top Tier, Mid, Low).
 
                     Output strictly matching JSON Schema:
-                    { 
+                    {
                         "is_correct_problem": boolean,
                         "coreCompetencies": {
                              "problemSolving": number,
                              "writingAbility": number,
                              "calculationAccuracy": number
                         },
-                        "strengths": ["string", "string"], 
-                        "weaknesses": ["string", "string"], 
+                        "strengths": ["string", "string"],
+                        "weaknesses": ["string", "string"],
                         "study_points": ["string", "string"],
-                        "growth_analysis": "Detailed markdown text comparing to potential past mistakes.",
+                        "growth_analysis": "Detailed markdown text comparing to actual past submissions (if available).",
                         "overall_eval": "Detailed strict markdown text.",
                         "text": "A brief 2-sentence summary for the notifications."
                     }
@@ -361,43 +473,84 @@ exports.processGradingTask = onTaskDispatched({
                 };
             }
 
-            // Step 3: Generate Premium HTML Report
+            // Step 3: Calculate Growth Metrics
+            const ticketData = docSnap.data();
+            const currentStudentId = ticketData.studentId;
+            const studentHistory = await getStudentHistory(db, currentStudentId, 5);
+
+            const currentResult = {
+                score: finalScore,
+                coreCompetencies: tasks.feedback.data.coreCompetencies || {
+                    problemSolving: 0,
+                    writingAbility: 0,
+                    calculationAccuracy: 0
+                }
+            };
+
+            const growthMetrics = calculateGrowthMetrics(currentResult, studentHistory);
+
+            // Save to student's submissions collection
+            const studentRef = db.collection('students').doc(currentStudentId);
+            await studentRef.collection('submissions').add({
+                ticketId: ticketId,
+                problemId: ticketData.problemId,
+                score: finalScore,
+                coreCompetencies: currentResult.coreCompetencies,
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                isCorrectProblem: tasks.feedback.data.is_correct_problem,
+                strengths: tasks.feedback.data.strengths,
+                weaknesses: tasks.feedback.data.weaknesses
+            });
+
+            // Update student total submissions count
+            await studentRef.update({
+                totalSubmissions: admin.firestore.FieldValue.increment(1),
+                lastSubmissionAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+
+            // Step 4: Generate Premium HTML Report with Growth Data
             const fullResultData = {
                 score: finalScore,
                 formula: tasks.formula.data,
                 logic: tasks.logic.data,
-                feedback: tasks.feedback.data
+                feedback: tasks.feedback.data,
+                growthMetrics: growthMetrics
             };
 
             const htmlReport = await callGemini(
                 "You are a Frontend Developer specializing in Tailwind CSS reports.",
                 `
                 Convert this Grading Result into a Premium HTML Report.
-                
+
                 [Data]:
                 ${JSON.stringify(fullResultData)}
-                
+
                 [Design Requirements]:
                 - Use Tailwind CSS.
                 - Dark Mode theme (bg-zinc-900 text-gray-200).
                 - Use <div class="p-6 bg-[#13111c] rounded-2xl border border-white/5"> for cards.
                 - Display Total Score prominently with a gradient text.
-                
+
                 - **CRITICAL: Competency Visualization**:
                   - Display 'Core Competencies' (Problem Solving, Writing, Calculation) using Progress Bars.
                   - Use data.feedback.coreCompetencies.score for width (e.g. w-[80%]).
-                
-                - **CRITICAL: New Sections**:
+
+                - **CRITICAL: Growth Metrics Section** (NEW):
+                  - Display growth metrics: trend (${growthMetrics.trend}), score improvement (${growthMetrics.scoreImprovement}), submission count
+                  - Show competency growth with +/- indicators if available
+                  - Use green for improving, red for declining, gray for stable/new
+
+                - **CRITICAL: Sections**:
                   1. **Growth Analysis** (Use cyan accents): data.feedback.growth_analysis (Render Markdown)
                   2. **Strengths** (Use green accents): data.feedback.strengths
                   3. **Weaknesses** (Use red accents): data.feedback.weaknesses
                   4. **Study Points** (Use blue accents): data.feedback.study_points
                   5. **Overall Evaluation** (Use purple accents): data.feedback.overall_eval
-                  
+
                 - If score is 0 and is_wrong_problem is true, display a LARGE WARNING: "Different Problem Detected".
                 - Format LaTeX Math with $...$ (e.g. $\\int x dx$).
                 - DO NOT include fully proper HTML structure (<html>, <body>), only the inner container HTML to be injected into a detailed view.
-                
+
                 Output ONLY valid HTML code.
                 `,
                 null,
@@ -408,7 +561,8 @@ exports.processGradingTask = onTaskDispatched({
                 status: 'completed',
                 'result.score': finalScore,
                 'result.summary': tasks.feedback.data.text,
-                'result.html_report': htmlReport.text // Store the HTML
+                'result.html_report': htmlReport.text,
+                'result.growthMetrics': growthMetrics
             });
         }
 

@@ -1144,12 +1144,20 @@
                     const API_URL = 'https://us-central1-questio-2dd69.cloudfunctions.net/submitAnswer';
 
                     const studentName = document.getElementById('studentName').value || "Guest Student";
+                    const studentEmail = document.getElementById('studentEmail').value || null;
                     const criteriaText = document.getElementById('detailContext').value;
 
                     const response = await fetch(API_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: studentName, imageUrl: imageBase64, problemId: problemId, criteria: criteriaText })
+                        body: JSON.stringify({
+                            userId: studentName,
+                            studentName: studentName,
+                            studentEmail: studentEmail,
+                            imageUrl: imageBase64,
+                            problemId: problemId,
+                            criteria: criteriaText
+                        })
                     });
 
                     if (!response.ok) {
