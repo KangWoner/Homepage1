@@ -993,11 +993,8 @@
 
                 const reportBody = document.getElementById('reportBody');
 
-                console.log("showReport called with:", resultData); // DEBUG
-
                 // CHECK: 3-Step Pipeline Result (Premium HTML)
                 if (resultData && resultData.html_report) {
-                    console.log("Rendering HTML Report");
                     reportBody.innerHTML = resultData.html_report;
                 } else {
                     console.warn("HTML Report missing, using fallback. Result Data:", resultData);
@@ -1024,9 +1021,7 @@
 
                 // Trigger MathJax Typeset for LaTeX formulas
                 if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([reportBody]).then(() => {
-                        console.log("MathJax Render Complete");
-                    }).catch((err) => console.log('MathJax typeset failed: ' + err.message));
+                    window.MathJax.typesetPromise([reportBody]).catch((err) => console.error('MathJax typeset failed:', err.message));
                 }
 
                 // Scroll to the Report Section with animation
@@ -1110,7 +1105,6 @@
 
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
-            console.log("Firebase Initialized (Clean Module)");
 
             window.submitAnswerToAPI = async function (problemId, file) {
                 document.getElementById('progressOverlay').classList.remove('hidden');
@@ -1152,8 +1146,6 @@
                     const studentName = document.getElementById('studentName').value || "Guest Student";
                     const criteriaText = document.getElementById('detailContext').value;
 
-                    console.log("Submitting to API (v3.1 Absolute):", API_URL);
-
                     const response = await fetch(API_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -1166,8 +1158,6 @@
                     }
                     const data = await response.json();
                     const ticketId = data.ticketId;
-
-                    console.log("Ticket Created:", ticketId);
 
                     const unsub = onSnapshot(doc(db, "grading_tickets", ticketId), (docSnap) => {
                         const d = docSnap.data();
@@ -1213,8 +1203,6 @@
                     document.getElementById('progressOverlay').classList.add('hidden');
                 }
             };
-
-            console.log("Module Loaded: submitAnswerToAPI attached.");
         </script>
 </body>
 

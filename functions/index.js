@@ -41,7 +41,6 @@ try {
             });
         }
     });
-    console.log(`Loaded ${problemsMap.size} problems.`);
 } catch (e) {
     console.error("Failed to load problems.csv:", e);
 }
@@ -107,7 +106,6 @@ exports.submitAnswer = onRequest({ cors: true }, async (req, res) => {
 
     try {
         const { problemId, studentName, imageUrl, criteria } = req.body;
-        console.log(`[API] Received submission for ${problemId} from ${studentName}`);
 
         if (!imageUrl) {
             return res.status(400).json({ error: "Image URL is required" });
@@ -192,8 +190,6 @@ exports.processGradingTask = onTaskDispatched({
     const { ticketId, taskType, imageUrl, problemId, criteria } = data;
     const db = admin.firestore();
     const ticketRef = db.collection('grading_tickets').doc(ticketId);
-
-    console.log(`[Start] Task: ${taskType}, Ticket: ${ticketId}`);
 
     try {
         await ticketRef.update({
@@ -335,8 +331,6 @@ exports.processGradingTask = onTaskDispatched({
             tasks.logic.status === 'completed' &&
             tasks.feedback.status === 'completed') {
 
-            console.log(`[Aggregation] All tasks complete for ${ticketId}. Generating HTML Report...`);
-
             // Calculate Score
             // Check for Wrong Problem Penalty (Override score if wrong problem)
             const isWrongProblem = (tasks.formula.data.is_correct_problem === false || tasks.feedback.data.is_correct_problem === false);
@@ -351,7 +345,6 @@ exports.processGradingTask = onTaskDispatched({
 
             if (isWrongProblem) {
                 finalScore = 0;
-                console.log("Penalty: Student solved wrong problem. Score reset to 0.");
             }
 
             if (hasError) {
@@ -417,7 +410,6 @@ exports.processGradingTask = onTaskDispatched({
                 'result.summary': tasks.feedback.data.text,
                 'result.html_report': htmlReport.text // Store the HTML
             });
-            console.log(`[Finalized] Ticket ${ticketId} Score: ${finalScore}`);
         }
 
     } catch (error) {
@@ -439,7 +431,6 @@ exports.searchScoringCriteria = onRequest({ cors: true }, async (req, res) => {
     }
 
     const { university, year, problemType } = req.body;
-    console.log(`[Search] Criteria for: ${university} ${year} ${problemType}`);
 
     try {
         const generativeModel = vertex_ai.preview.getGenerativeModel({
