@@ -88,6 +88,7 @@ async function fetchProblems(file = null) {
         parseCSV(text);
         filterProblems();
     } catch (e) {
+        console.error("Failed to fetch problems:", e);
     }
 }
 
@@ -180,6 +181,8 @@ window.submitAnswerToAPI = async function (problemId, file) {
         // ...
         // onSnapshot mock
     } catch (error) {
+        console.error("Failed to submit answer to API:", error);
+        document.getElementById('progressOverlay').classList.add('hidden');
     }
 };
 
