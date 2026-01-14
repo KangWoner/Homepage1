@@ -14,7 +14,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-console.log("Firebase Initialized (Clean Module)");
 
 window.submitAnswerToAPI = async function (problemId, file) {
     document.getElementById('progressOverlay').classList.remove('hidden');
@@ -56,8 +55,6 @@ window.submitAnswerToAPI = async function (problemId, file) {
         const studentName = document.getElementById('studentName').value || "Guest Student";
         const criteriaText = document.getElementById('detailContext').value;
 
-        console.log("Submitting to API (v3.1 Absolute):", API_URL);
-
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -67,8 +64,6 @@ window.submitAnswerToAPI = async function (problemId, file) {
         if (!response.ok) throw new Error('Network error');
         const data = await response.json();
         const ticketId = data.ticketId;
-
-        console.log("Ticket Created:", ticketId);
 
         const unsub = onSnapshot(doc(db, "grading_tickets", ticketId), (docSnap) => {
             const d = docSnap.data();
@@ -114,5 +109,3 @@ window.submitAnswerToAPI = async function (problemId, file) {
         document.getElementById('progressOverlay').classList.add('hidden');
     }
 };
-
-console.log("Module Loaded: submitAnswerToAPI attached.");
