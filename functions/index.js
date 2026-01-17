@@ -7,42 +7,47 @@ const path = require('path');
 
 admin.initializeApp();
 
+const project = process.env.GCLOUD_PROJECT || admin.app().options.projectId || 'questio-2dd69';
+const location = 'us-central1';
+
 // Initialize Vertex AI
-const vertex_ai = new VertexAI({ project: 'questio-2dd69', location: 'us-central1' });
+const vertex_ai = new VertexAI({ project: project, location: location });
 const model = 'gemini-1.5-pro'; // Upgrade to Pro for deeper reasoning (Song Minsu Persona)
 
-// Load Problems from CSV (Cold Start)
-const problemsMap = new Map();
-try {
-    const csvPath = path.join(__dirname, 'sampleProbs.csv');
-    const csvContent = fs.readFileSync(csvPath, 'utf-8');
-    const rows = csvContent.trim().split('\n').slice(1);
+// Lazy Load Problems from CSV
+let problemsMap = null;
+function getProblemsMap() {
+    if (problemsMap) return problemsMap;
+    problemsMap = new Map();
+    try {
+        const csvPath = path.join(__dirname, 'sampleProbs.csv');
+        if (fs.existsSync(csvPath)) {
+            const csvContent = fs.readFileSync(csvPath, 'utf-8');
+            const rows = csvContent.trim().split('\n').slice(1);
 
-    rows.forEach((row, index) => {
-        // Robust split similar to frontend
-        const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            rows.forEach((row, index) => {
+                // Robust split similar to frontend
+                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
-        // Map new schema: 
-        // 0: University, 1: Year, 2: Question Type, 3: Prob URL, 4: Sol URL
-        // Previous: id, univ, year, subject, question, crit_form, crit_logic, model
+                // Generate pseudo ID
+                const id = `Q${String(index + 1).padStart(3, '0')}`;
 
-        // Generate pseudo ID
-        const id = `Q${String(index + 1).padStart(3, '0')}`;
-
-        if (cols.length >= 3) {
-            problemsMap.set(id, {
-                id: id,
-                subject: "수리논술", // Default
-                question: cols[2]?.replace(/"/g, '') || "논술 문제",
-                // Fallback Generic Criteria
-                criteria_formula: "수학적 계산의 정확성 및 공식 적용의 올바름 (General Math Rules)",
-                criteria_logic: "논리적 전개 과정 및 근거의 타당성 (Logical Consistency)",
-                model_answer: "참조 링크 확인 (Refer to Solution URL)"
+                if (cols.length >= 3) {
+                    problemsMap.set(id, {
+                        id: id,
+                        subject: "수리논술", // Default
+                        question: cols[2]?.replace(/"/g, '') || "논술 문제",
+                        criteria_formula: "수학적 계산의 정확성 및 공식 적용의 올바름 (General Math Rules)",
+                        criteria_logic: "논리적 전개 과정 및 근거의 타당성 (Logical Consistency)",
+                        model_answer: "참조 링크 확인 (Refer to Solution URL)"
+                    });
+                }
             });
         }
-    });
-} catch (e) {
-    console.error("Failed to load problems.csv:", e);
+    } catch (e) {
+        console.error("Failed to load problems.csv:", e);
+    }
+    return problemsMap;
 }
 
 // Helper: Call Gemini
@@ -52,7 +57,7 @@ async function callGemini(systemInstruction, userPrompt, imagePart, config = {})
             'maxOutputTokens': 8192,
             'temperature': 0.4,
             'topP': 0.95,
-            ...config // Merge custom config (e.g. responseMimeType)
+            ...config
         };
 
         const generativeModel = vertex_ai.preview.getGenerativeModel({
@@ -78,16 +83,33 @@ async function callGemini(systemInstruction, userPrompt, imagePart, config = {})
 
         // JSON Parsing
         if (config.responseMimeType === 'application/json') {
-            return JSON.parse(text);
+            try {
+                return JSON.parse(text);
+            } catch (jsonErr) {
+                 // Try to extract JSON from markdown block
+                const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
+                if (jsonMatch && jsonMatch[1]) {
+                    return JSON.parse(jsonMatch[1]);
+                }
+                if (text.trim().startsWith('{')) {
+                    return JSON.parse(text);
+                }
+                console.warn("Gemini returned non-JSON:", text);
+                return { text: text, error: "JSON Parse Failed" };
+            }
         }
 
-        const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
+        // Handle non-JSON response parsing for backup
+         const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
         if (jsonMatch && jsonMatch[1]) {
             return JSON.parse(jsonMatch[1]);
         }
         if (text.trim().startsWith('{')) {
-            return JSON.parse(text);
+             try {
+                return JSON.parse(text);
+             } catch (e) {}
         }
+
         return { text: text };
 
     } catch (e) {
@@ -98,7 +120,6 @@ async function callGemini(systemInstruction, userPrompt, imagePart, config = {})
 
 // 1. HTTP API: Submit Answer & Fan-out Tasks
 exports.submitAnswer = onRequest({ cors: true }, async (req, res) => {
-    // CORS is handled automatically by { cors: true }
     if (req.method === 'OPTIONS') {
         res.status(204).send('');
         return;
@@ -131,12 +152,7 @@ exports.submitAnswer = onRequest({ cors: true }, async (req, res) => {
         });
 
         // Fan-out: Dispatch 3 Cloud Tasks
-        const project = 'questio-2dd69';
-        const location = 'us-central1';
         const queue = 'grading-queue';
-        // Local fallback or simplified logging if Tasks client fails logic
-        // But we proceed to use CloudTasksClient below.
-
         const { CloudTasksClient } = require('@google-cloud/tasks');
         const tasksClientV2 = new CloudTasksClient();
         const parent = tasksClientV2.queuePath(project, location, queue);
@@ -145,13 +161,13 @@ exports.submitAnswer = onRequest({ cors: true }, async (req, res) => {
             const task = {
                 httpRequest: {
                     httpMethod: 'POST',
-                    url: `https://${location}-${project}.cloudfunctions.net/processGradingTask`, // URL of the worker
+                    url: `https://${location}-${project}.cloudfunctions.net/processGradingTask`,
                     headers: { 'Content-Type': 'application/json' },
                     body: Buffer.from(JSON.stringify({
                         ticketId, taskType: type, imageUrl, problemId, criteria
                     })).toString('base64'),
                     oidcToken: {
-                        serviceAccountEmail: `questio-2dd69@appspot.gserviceaccount.com`,
+                        serviceAccountEmail: `${project}@appspot.gserviceaccount.com`, // Dynamic Service Account
                     },
                 },
             };
@@ -197,7 +213,8 @@ exports.processGradingTask = onTaskDispatched({
         });
 
         // 1. Prepare Problem Context
-        let problem = problemsMap.get(problemId) || {
+        const currentProblems = getProblemsMap();
+        let problem = (currentProblems && currentProblems.get(problemId)) || {
             question: "Unknown Question",
             criteria_formula: "General Math Rules",
             criteria_logic: "Logical consistency",
@@ -245,9 +262,10 @@ exports.processGradingTask = onTaskDispatched({
                         "valid": boolean, 
                         "is_correct_problem": boolean,
                         "latex": "extracted latex", 
-                        "errors": ["error 1", ...], 
+                        "errors": ["error 1 (Korean)", ...],
                         "score_deduction": number 
                     }
+                    **IMPORTANT**: All text fields (especially 'errors') MUST be in Korean.
                     `,
                     imagePart,
                     jsonConfig
@@ -264,7 +282,8 @@ exports.processGradingTask = onTaskDispatched({
                     Analyze the flow of the argument.
                     - Are step transitions valid?
                     
-                    Output JSON: { "structure": "Valid"|"Invalid", "gaps": ["gap description"], "score_deduction": number }
+                    Output JSON: { "structure": "Valid"|"Invalid", "gaps": ["gap description (Korean)"], "score_deduction": number }
+                    **IMPORTANT**: All text fields (especially 'gaps') MUST be in Korean.
                     `,
                     imagePart,
                     jsonConfig
@@ -309,6 +328,7 @@ exports.processGradingTask = onTaskDispatched({
                         "overall_eval": "Detailed strict markdown text.",
                         "text": "A brief 2-sentence summary for the notifications."
                     }
+                    **IMPORTANT**: All text fields (strengths, weaknesses, study_points, analysis, etc.) MUST be in Korean.
                     `,
                     imagePart,
                     jsonConfig
