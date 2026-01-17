@@ -943,8 +943,7 @@
                 contextArea.value = `Searching web for '${univ} ${year} Grading Context'...`;
 
                 try {
-                    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                    const API_URL = isLocal ? 'https://searchscoringcriteria-qm5h7q6meq-uc.a.run.app' : '/searchScoringCriteria';
+                    const API_URL = '/searchScoringCriteria';
 
                     const response = await fetch(API_URL, {
                         method: 'POST',
@@ -1140,8 +1139,7 @@
                     });
 
                     const imageBase64 = await toBase64(file);
-                    // Force absolute URL for reliability
-                    const API_URL = 'https://us-central1-questio-2dd69.cloudfunctions.net/submitAnswer';
+                    const API_URL = '/submitAnswer';
 
                     const studentName = document.getElementById('studentName').value || "Guest Student";
                     const criteriaText = document.getElementById('detailContext').value;

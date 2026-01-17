@@ -10,6 +10,10 @@
       {
         "source": "/submitAnswer",
         "function": "submitAnswer"
+      },
+      {
+        "source": "/searchScoringCriteria",
+        "function": "searchScoringCriteria"
       }
     ]
   },
