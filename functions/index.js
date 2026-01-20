@@ -18,18 +18,23 @@ try {
     const csvContent = fs.readFileSync(csvPath, 'utf-8');
     const rows = csvContent.trim().split('\n').slice(1);
 
-    rows.forEach((row, index) => {
+    // Use validIndex to ensure sequential IDs (Q001, Q002, Q003...)
+    // even when some rows are skipped due to insufficient columns
+    let validIndex = 0;
+
+    rows.forEach((row) => {
         // Robust split similar to frontend
         const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
-        // Map new schema: 
+        // Map new schema:
         // 0: University, 1: Year, 2: Question Type, 3: Prob URL, 4: Sol URL
         // Previous: id, univ, year, subject, question, crit_form, crit_logic, model
 
-        // Generate pseudo ID
-        const id = `Q${String(index + 1).padStart(3, '0')}`;
-
         if (cols.length >= 3) {
+            validIndex++;
+            // Generate pseudo ID based on valid row count
+            const id = `Q${String(validIndex).padStart(3, '0')}`;
+
             problemsMap.set(id, {
                 id: id,
                 subject: "수리논술", // Default

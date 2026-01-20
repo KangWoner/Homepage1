@@ -77,7 +77,7 @@ describe('CSV Parsing and problemsMap', () => {
     });
   });
 
-  test('should skip rows with insufficient columns', () => {
+  test('should skip rows with insufficient columns and maintain sequential IDs', () => {
     const mockCSV = `University,Year,Question Type,Prob URL,Sol URL
 서울대,2024,미적분학,http://prob1.com,http://sol1.com
 연세대,2023
@@ -90,10 +90,10 @@ describe('CSV Parsing and problemsMap', () => {
     // Should only have 2 entries (skips the one with 2 columns)
     expect(problemsMap.size).toBe(2);
     expect(problemsMap.has('Q001')).toBe(true);
-    // BUG DISCOVERED: Q002 is skipped but ID continues incrementing
-    // So we get Q001 and Q003, not Q001 and Q002
-    expect(problemsMap.has('Q002')).toBe(false); // ID skipped due to insufficient cols
-    expect(problemsMap.has('Q003')).toBe(true); // This gets added with Q003 ID
+    // After bug fix: IDs are sequential based on valid rows only
+    // So we get Q001 and Q002 (not Q001 and Q003)
+    expect(problemsMap.has('Q002')).toBe(true); // Second valid row gets Q002
+    expect(problemsMap.has('Q003')).toBe(false); // No third valid row
   });
 
   test('should handle file read error gracefully', () => {
