@@ -469,3 +469,12 @@ exports.searchScoringCriteria = onRequest({ cors: true }, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+// Export for testing
+module.exports = {
+    submitAnswer: exports.submitAnswer,
+    processGradingTask: exports.processGradingTask,
+    searchScoringCriteria: exports.searchScoringCriteria,
+    callGemini, // Export helper for testing
+    problemsMap // Export for testing CSV loading
+};
